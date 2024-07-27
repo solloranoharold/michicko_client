@@ -1,0 +1,39 @@
+@font-face {
+    font-family: 'Outfit';
+    src: url('../assets/fonts/Outfit.ttf') 
+    /* Add other font formats here for cross-browser compatibility */
+}
+body {
+    font-family: 'Outfit';
+}
+
+.textTitle { 
+    font-family: 'Outfit';
+}
+.mainbarTitle {
+    font-family: 'Outfit';
+    font-size: 22px;
+}
+.toolbarTitle {
+    font-family: 'Outfit';
+    font-size: 20px;
+}
+
+::-webkit-scrollbar {
+    width: 12px;
+    /* width of the scrollbar */
+}
+
+/* Handle part of the scrollbar */
+::-webkit-scrollbar-thumb {
+    background-color: #888;
+    /* color of the scrollbar */
+    border-radius: 6px;
+    /* roundness of the scrollbar */
+}
+
+/* Track part of the scrollbar */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    /* color of the track */
+}

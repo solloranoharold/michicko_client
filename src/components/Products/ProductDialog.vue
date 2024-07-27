@@ -1,0 +1,138 @@
+<template>
+     <v-dialog 
+        persistent
+        transition="dialog-top-transition"
+        max-width="550"
+        v-model="value"
+      >
+          <v-card>
+            <v-toolbar
+            class="toolbarTitle"
+               color="#BCAAA4"
+              dark
+            ><v-icon>mdi-bottle-soda-classic-outline</v-icon>{{ editedObj.method == 0 ? 'ADD' : 'UPDATE' }} PRODUCT
+            <v-spacer/>
+            <v-icon v-if="!loading" @click="close()">mdi-close</v-icon>
+            </v-toolbar>
+            <v-card-text v-if="!loading">
+                <br/>
+                <v-form
+                    ref="form"
+                    v-model="valid"
+                    lazy-validation
+                    class="textTitle"
+                >
+                    <!-- <v-autocomplete dense :rules="nameRules" item-value="organization_id" item-text="organization_name"  required prepend-inner-icon="mdi-domain" placeholder="Organization"  :items="organizations" v-model="editedObj.organization_id"></v-autocomplete> -->
+                    <v-text-field :rules="nameRules" required prepend-inner-icon="mdi-bottle-soda-classic-outline" placeholder="Product" v-model="editedObj.product_name"></v-text-field> 
+                    <v-layout fill-height>
+                         <v-text-field label="SRP" :rules="nameRules" type="number" :min="1" required prepend-inner-icon="mdi-currency-php" placeholder="SRP" v-model="editedObj.srp"></v-text-field> 
+                         <v-text-field label="Original Price" :rules="nameRules" type="number" :min="1" required prepend-inner-icon="mdi-currency-php" placeholder="Original Price" v-model="editedObj.price"></v-text-field> 
+                        <v-text-field label="Quantity" :readonly="editedObj.method == 1 " :rules="nameRules" type="number" :min="1" required prepend-inner-icon="mdi-plus-box" placeholder="Quantity" v-model="editedObj.quantity"></v-text-field> 
+                        
+                    </v-layout>
+                    <v-text-field label="Add Quantity" v-if="editedObj.method == 1 " :rules="editedObj.method == 1 ?nameRules:''" type="number" :min="1" required prepend-inner-icon="mdi-plus-box" placeholder="Quantity" v-model="historyObj.added_quantity"></v-text-field> 
+                    <v-card-actions class="justify-end">
+                        <v-btn :disabled="!valid"
+                        class="textTitle" rounded dark color="#BCAAA4"
+                        @click="addUpdateProduct()"
+                    ><v-icon>mdi-bottle-soda-classic-outline</v-icon>{{ editedObj.method== 0 ? 'Add':"Update" }} Product</v-btn>
+                    
+                    </v-card-actions>
+                </v-form>
+                </v-card-text>
+                <LoaderView v-else/>
+          </v-card>
+      </v-dialog>
+</template>
+<script>
+import Organizations from '@/class/organizations'
+import Inventory from '@/class/products';
+import LoaderView from '@/views/LoaderView.vue';
+export default {
+    components:{ LoaderView} , 
+     props: {
+        dialog:{
+            type: Boolean,
+            required: true 
+        },
+        saveDataObj:{
+            type: Object ,
+            required:true
+        }
+    },
+    computed: {
+        value() {
+            return this.dialog 
+        }
+    },
+    watch: {
+        value(val) {
+            if (val) {
+                this.loadOrganizations()
+            }
+        },
+         saveDataObj(val){
+            if(Object.keys(val).length !== 0 ) {
+                this.editedObj = JSON.parse(JSON.stringify(val))
+                this.editedObj.method = 1 
+                this.historyObj = {
+                    product_id: val.product_id,
+                    organization_id: this.userInfo.organization_id,
+                    updated_by: this.userInfo.employee_id
+                }
+            }else{
+                this.editedObj.method = 0
+            }
+            console.log('saveDataObj' , this.editedObj )
+        },
+    },
+    methods: {
+        async loadOrganizations() {
+             let organization_id = this.$route?.params?.organization_id ? this.$route.params.organization_id: this.userInfo.organization_id
+            this.organizations = await this.classOrg.readOrganizationsPerID(organization_id)
+            this.editedObj.organization_id = this.organizations[0].organization_id
+            console.log(this.organizations ,'loadOrganizations')
+        },
+        async addUpdateProduct() {
+            if (this.$refs.form.validate()) {
+                 if (this.editedObj.method == 1) {
+                    if (this.historyObj.added_quantity <= 0) {
+                        alert('Negative or Zero value is not allowed')
+                        return false 
+                    }
+                     if (this.historyObj.added_quantity) {
+                        this.historyObj.previous_stock = this.editedObj.quantity 
+                        this.editedObj.quantity = parseFloat(this.editedObj.quantity) + parseFloat(this.historyObj.added_quantity)
+                        this.historyObj.current_stock = this.editedObj.quantity
+                    }
+                }
+                this.editedObj.updated_by = this.userInfo.employee_id
+                 this.loading=true 
+                await this.classInventory.addUpdateProduct(this.editedObj).then(async() => {
+                    if (this.historyObj.added_quantity) await this.classInventory.productHistoryCreate(this.historyObj)
+
+                    this.close()
+                     this.loading=false 
+                 }) 
+            }
+        },
+        close() {
+            this.editedObj={}
+            this.$emit('closeDialog' , false )
+        }
+   },
+    data: () => ({
+        classInventory: new Inventory(),
+        classOrg: new Organizations(),
+        editedObj: {},
+        valid: false,
+         nameRules: [
+            v => !!v || 'This field is required'
+        ],
+        organizations: [],
+        units: ['ML', 'G'],
+        loading: false,
+        historyObj:{}
+    })
+}
+</script>
