@@ -66,7 +66,7 @@ export default {
                    this.loading=false
                   return false 
                  }
-                 data.isSignIn = 1 
+               data.isSignIn = true 
                await Cookies.set('token', data.token , { expires: 1 })
                  delete data.token 
                  let obj = { account_id: data.account_id, isSignIn: 1 }

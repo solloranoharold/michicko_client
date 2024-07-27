@@ -124,7 +124,7 @@ router.beforeEach(async(to , from , next)=>{
   } else {
     if (!Cookies.get('token')) {
       if (store.state.userInfo != null) {
-          store.state.userInfo.isSignIn = 0 
+          store.state.userInfo.isSignIn = false
           console.log(store.state)
           let obj = {account_id : store.state.userInfo.account_id,isSignIn : 0 }
           await accounts.updateSessionAccountStatus(obj).then(() => { 
