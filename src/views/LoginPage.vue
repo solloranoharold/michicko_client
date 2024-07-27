@@ -53,7 +53,7 @@ export default {
             console.log(data , 'asdsadas')
               if (!data.error) {
                
-                 if (data.isSignIn == 1) {
+                 if (data.isSignIn == true) {
                   Swal.fire({
                      position: "top-end",
                      title: `Account already login`,
