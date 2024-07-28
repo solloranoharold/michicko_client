@@ -400,6 +400,7 @@ export default {
                         title: "Insert Cashless Payment Method First",
                         showConfirmButton: true,
                         });
+                        this.$router.push('/cashless')
                     return false 
                 }
                 this.epayments = data 
