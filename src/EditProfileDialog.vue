@@ -23,7 +23,7 @@
                         <!-- @click:append="searchTransaction" -->
                         <v-card-actions>
                             <v-spacer/>
-                            <v-btn v-if="valid" @click="updateAccount()"> <v-icon>mdi-account</v-icon> Update Account </v-btn>
+                            <v-btn dark color="#BCAAA4" v-if="valid" @click="updateAccount()"> <v-icon>mdi-account</v-icon> Update Account </v-btn>
                         </v-card-actions>
                 </v-form>
                     </v-card-text>
