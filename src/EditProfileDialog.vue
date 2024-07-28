@@ -19,7 +19,7 @@
                     >
                         <v-text-field :rules="nameRules" prepend-icon="mdi-account" label="Username" dense rounded outlined readonly filled v-model="editObj.username"></v-text-field>
                         <v-text-field :append-icon="!show ? ' mdi-eye-off' : ' mdi-eye'" :rules="nameRules" :type="show ? 'text' : 'password'"  prepend-inner-icon="mdi-key" label="Password" dense rounded outlined  v-model="password" @click:append="show=!show"></v-text-field>
-                        <v-text-field :append-icon="!show ? ' mdi-eye-off' : ' mdi-eye'" :rules="nameRules" :type="show ? 'text' : 'password'"   prepend-inner-icon="mdi-key" label="Confirm Password" dense rounded outlined  v-model="confirm_password" @click:append="show=!show"></v-text-field>
+                        <v-text-field :append-icon="!show1 ? ' mdi-eye-off' : ' mdi-eye'" :rules="nameRules" :type="show ? 'text' : 'password'"   prepend-inner-icon="mdi-key" label="Confirm Password" dense rounded outlined  v-model="confirm_password" @click:append="show1=!show1"></v-text-field>
                         <!-- @click:append="searchTransaction" -->
                         <v-card-actions>
                             <v-spacer/>
@@ -38,7 +38,8 @@ export default {
     props: ['dialog', 'saveObj'],
     data: () => ({
         classAccount: new Accounts(),
-        show:false , 
+        show: false, 
+        show1:false , 
        password: "",
         confirm_password: "", 
        nameRules: [
