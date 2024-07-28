@@ -51,7 +51,8 @@ export default {
     components:{LoaderView},
     data: () => ({
         classReports: new Reports(),
-        types: ['INVENTORY', 'DAILY_SUMMARY', 'EXECUTIVE_SUMMARY','SALES_TRACKING'],
+        types: ['INVENTORY', 'DAILY_SUMMARY'],
+        // , 'EXECUTIVE_SUMMARY','SALES_TRACKING'
         dates: [],
         menu: false ,
         type: "",
