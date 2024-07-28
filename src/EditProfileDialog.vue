@@ -56,6 +56,7 @@ export default {
     },
     methods: {
         async updateAccount() {
+            if (this.$refs.form.validate()) { 
             if (this.confirm_password.toUpperCase() !== this.password.toUpperCase()) {
                 Swal.fire({
                         toast: true,
@@ -91,7 +92,7 @@ export default {
 
                  }
              })
-          
+          }
         },
         close() {
             this.$emit('closeDialog', false )
