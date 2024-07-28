@@ -394,6 +394,14 @@ export default {
             this.loadingText = 'EPAYMENTS'
              let organization_id =this.$route?.params?.organization_id ?this.$route.params.organization_id: this.userInfo.organization_id
             await this.classEpayments.loadEpayments(organization_id).then((data) => { 
+                if (!data.length) {
+                        Swal.fire({
+                        icon: "info",
+                        title: "Insert Cashless Payment Method First",
+                        showConfirmButton: true,
+                        });
+                    return false 
+                }
                 this.epayments = data 
                 this.transactionObj.e_payment = data[0].payment_method
                 this.loading = false 
