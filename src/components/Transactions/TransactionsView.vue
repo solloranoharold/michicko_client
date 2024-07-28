@@ -9,7 +9,7 @@
                     <v-toolbar flat dense>
                     <label class="textTitle" style="font-size: 13px;"> Page {{page}} of {{ totalPages }}, Total Items: {{ totalCountTransaction }}</label>
                     <v-spacer/>
-                         <v-btn class="textTitle" @click="$router.push('/transactions')"  rounded dark color="#BCAAA4"><v-icon>mdi-content-cut</v-icon>Create Transactions</v-btn>
+                         <v-btn :disabled="userInfo.position!=0" class="textTitle" @click="$router.push('/pos')"  rounded dark color="#BCAAA4"><v-icon>mdi-content-cut</v-icon>Create Transactions</v-btn>
                      </v-toolbar>
                     <br/>
                     <i class="textTitle" style="font-size: 11px;">click<v-icon>mdi-magnify</v-icon> to search specific data</i>

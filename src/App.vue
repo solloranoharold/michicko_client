@@ -50,7 +50,7 @@
         </template>
         <v-card>
           <v-list dense  class="textTitle">
-            <v-list-item>
+            <v-list-item @click="editAccount()">
               <v-list-item-icon>
                 <v-icon>mdi-pencil-outline</v-icon>
               </v-list-item-icon>
@@ -177,6 +177,7 @@
         
         </v-list>
       </v-navigation-drawer>
+      <EditProfileDialog :dialog="profileDialog" :saveObj="profileObj" @closeDialog="closeDialog"/>
     <v-main>
       <router-view/>
     </v-main>
@@ -190,12 +191,15 @@ import Swal from 'sweetalert2'
 
 import { io } from "socket.io-client";
 import Accounts from './class/accounts';
-
+import EditProfileDialog from './EditProfileDialog.vue';
 
 export default {
   name: 'App',
+  components:{EditProfileDialog},
   data: () => ({
-    socket:null,
+    socket: null,
+    profileDialog: false,
+    profileObj:{},
     classTransaction: new Transactions(),
     classAccount: new Accounts(),
     notifications:[],
@@ -244,6 +248,17 @@ export default {
     }
   },
   methods: {
+    editAccount() {
+      this.profileDialog = true
+      let obj = { 
+        account_id: this.userInfo.account_id,
+        username: this.userInfo.username, 
+      }
+      this.profileObj = JSON.parse(JSON.stringify(obj))
+    },
+    closeDialog(val) {
+      this.profileDialog = val 
+    },
     async loadNotifications() {
       this.notifications = await this.classTransaction.loadNotifications( this.userInfo.organization_id)
       let a = this.notifications.filter(item => {

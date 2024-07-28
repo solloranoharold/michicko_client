@@ -50,7 +50,17 @@ export default {
            async loginUser() {
                this.loading=true
               let data =  await this.account.loginAccount( this.username , this.password )
-            console.log(data , 'asdsadas')
+              console.log(data, 'asdsadas')
+             if (!data) {
+                     Swal.fire({
+                        position: "top-end",
+                        title: `Username and Password not matched`,
+                        showConfirmButton: false,
+                        icon:'error',
+                        timer: 5000
+                        });
+                     return false 
+                    }
               if (!data.error) {
                
                  if (data.isSignIn == true) {
@@ -80,8 +90,9 @@ export default {
                      showConfirmButton: false,
                      timer: 1500
                    });
-                  console.log(data , 'data')
+                  console.log(data , 'account')
                     this.loading = false 
+                   
                     if (data.position_id != 0 && data.position_id != 1) {
                         let navbar = [ 
                          { name: "Point of Sale", path: '/pos', 'icon': "mdi-currency-php" },

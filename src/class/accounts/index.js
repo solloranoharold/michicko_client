@@ -85,6 +85,10 @@ export default class Accounts {
         let a = await getApiSearchAccounts(employee_id , organization_id , search )
         return a 
     }
+    async updateAccountPassword( data ) {
+        let a = axios.postRequest('accounts/updateAccountPassword' , data)
+        return await a
+    }
     
 }
 async function getApiSearchAccounts(employee_id, organization_id, search ) {
@@ -117,3 +121,4 @@ async function apiLogin(username, password) {
     let a = await axios.postRequest(`accounts/login`, { username: username, password: password })
     return await a 
 }
+
