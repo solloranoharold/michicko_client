@@ -64,25 +64,25 @@ export default {
                     }
               if (!data.error) {
                
-                 if (data.isSignIn == true) {
-                  Swal.fire({
-                     position: "top-end",
-                     title: `Account already login`,
-                     showConfirmButton: false,
-                     icon:'info',
-                     timer: 5000
-                  });
-                   this.username = ''
-                    this.password = ''
-                   this.loading=false
-                  return false 
-                 }
-               data.isSignIn = true 
+               //   if (data.isSignIn == true) {
+               //    Swal.fire({
+               //       position: "top-end",
+               //       title: `Account already login`,
+               //       showConfirmButton: false,
+               //       icon:'info',
+               //       timer: 5000
+               //    });
+               //     this.username = ''
+               //      this.password = ''
+               //     this.loading=false
+               //    return false 
+               //   }
+               // data.isSignIn = true 
                await Cookies.set('token', data.token , { expires: 1 })
                  delete data.token 
-                 let obj = { account_id: data.account_id, isSignIn: 1 }
+               //   let obj = { account_id: data.account_id, isSignIn: 1 }
                
-               await this.account.updateSessionAccountStatus(  obj )
+               // await this.account.updateSessionAccountStatus(  obj )
                  setTimeout(async () => {
                   this.$store.commit('STORE_USERINFO', data)
                    Swal.fire({

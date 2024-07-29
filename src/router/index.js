@@ -125,19 +125,28 @@ router.beforeEach(async(to , from , next)=>{
     if (!Cookies.get('token')) {
       if (store.state.userInfo != null) {
           store.state.userInfo.isSignIn = false
-          console.log(store.state)
-          let obj = {account_id : store.state.userInfo.account_id,isSignIn : 0 }
-          await accounts.updateSessionAccountStatus(obj).then(() => { 
-              store.state.userInfo = null
-              Swal.fire({
-                position: "top-end",
-                icon: "warning",
-                title: "Session Expired",
-                showConfirmButton: false,
-                timer: 1500
-            });
-            next('/login')
-          })
+        console.log(store.state)
+        store.state.userInfo = null
+          Swal.fire({
+            position: "top-end",
+            icon: "warning",
+            title: "Session Expired",
+            showConfirmButton: false,
+            timer: 1500
+          });
+        next('/login')
+          // let obj = {account_id : store.state.userInfo.account_id,isSignIn : 0 }
+          // await accounts.updateSessionAccountStatus(obj).then(() => { 
+          //     store.state.userInfo = null
+          //     Swal.fire({
+          //       position: "top-end",
+          //       icon: "warning",
+          //       title: "Session Expired",
+          //       showConfirmButton: false,
+          //       timer: 1500
+          //   });
+          //   next('/login')
+          // })
       } else {
         next('/login')
         }

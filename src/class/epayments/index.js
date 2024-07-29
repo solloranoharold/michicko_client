@@ -23,7 +23,7 @@ export default class Epayments {
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
+                cancelButtonColor: "white",
                 confirmButtonText: `Yes, ${method == 0 ? 'add' : 'update'} it!`,
             }).then(async(result) => {
                 if (result.isConfirmed) {
