@@ -220,6 +220,7 @@ export default {
   }),
   async created() {
     let host = process.env.VUE_APP_API_URL
+    console.log(host)
     if(this.userInfo!=null && Cookies.get('token')) await this.loadNotifications()
     this.socket = io(host,{
       transports: ['websocket'],
