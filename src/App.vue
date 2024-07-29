@@ -222,7 +222,7 @@ export default {
     let host = process.env.VUE_APP_API_URL
     if(this.userInfo!=null && Cookies.get('token')) await this.loadNotifications()
     this.socket = io(host,{
-      transports: ['polling'],
+      transports: ['websocket'],
     });
     this.socket.on("connect_error", (err) => {
     // the reason of the error, for example "xhr poll error"
