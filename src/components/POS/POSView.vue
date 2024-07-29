@@ -327,7 +327,8 @@ export default {
         }
     },
     async created() {
-        let host = process.env.VUE_APP_API_URL
+        let host = process.env.VUE_APP_API_SOCKET
+        console.log(host)
         this.generateTransactionID()
         this.socket = io(host,{
         transports: ['websocket'],
