@@ -330,7 +330,7 @@ export default {
         let host = process.env.VUE_APP_API_URL
         this.generateTransactionID()
         this.socket = io(host,{
-        transports: ['websocket'],
+        transports: ['polling'],
         });
         this.socket.on("connect_error", (err) => {
             // the reason of the error, for example "xhr poll error"
