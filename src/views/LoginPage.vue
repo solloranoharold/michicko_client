@@ -58,7 +58,8 @@ export default {
                         showConfirmButton: false,
                         icon:'error',
                         timer: 5000
-                        });
+                     });
+                        this.loading = false 
                      return false 
                     }
               if (!data.error) {
