@@ -96,7 +96,8 @@ export default {
                    
                     if (data.position_id != 0 && data.position_id != 1) {
                         let navbar = [ 
-                         { name: "Point of Sale", path: '/pos', 'icon': "mdi-currency-php" },
+                           { name: "Point of Sale", path: '/pos', 'icon': "mdi-currency-php" },
+                          { name: "Clients", path: '/clients', 'icon': "mdi-account-multiple" },
                        ]
                         this.$store.commit('STORE_NAVBAR' , navbar )
                       this.$store.commit('GROUP_MODULES' , [ 
