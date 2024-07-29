@@ -17,8 +17,8 @@ import DashboardView from '@/components/Dashboard/DashboardView.vue'
 import CashlessView from '@/components/Cashless/CashlessView.vue';
 import Swal from 'sweetalert2'
 import store from '@/store'
-import Accounts from '@/class/accounts';
-let accounts = new Accounts()
+// import Accounts from '@/class/accounts';
+// let accounts = new Accounts()
 Vue.use(VueRouter)
 
 const routes = [
