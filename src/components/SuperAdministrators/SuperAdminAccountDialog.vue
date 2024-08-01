@@ -22,8 +22,8 @@
                     class="textTitle"
                 >
                     <!-- <v-autocomplete  dense :rules="nameRules" item-value="organization_id" item-text="organization_name"  required prepend-inner-icon="mdi-domain" placeholder="Organization"  :items="organizations" v-model="editedObj.organization_id"></v-autocomplete> -->
-                     <v-autocomplete dense clearable :rules="nameRules" item-value="employee_id" item-text="fullname"  required prepend-inner-icon="mdi-account" placeholder="Employee"  :items="employees" v-model="editedObj.employee_id"></v-autocomplete>
                      <v-autocomplete readonly dense  :rules="nameRules" item-value="position_id" item-text="position"   prepend-inner-icon="mdi-domain" placeholder="Position"  :items="positions" v-model="editedObj.position_id"></v-autocomplete>
+                     <v-autocomplete dense clearable :rules="nameRules" item-value="employee_id" item-text="fullname"  required prepend-inner-icon="mdi-account" placeholder="Employee"  :items="employees" v-model="editedObj.employee_id"></v-autocomplete>
                      <v-text-field dense :filled="editedObj.method == 1" :readonly="editedObj.method == 1" :rules="nameRules" required prepend-inner-icon="mdi-account" placeholder="Username" v-model="editedObj.username"></v-text-field>
                     <v-text-field v-if="editedObj.method == 0" :rules="editedObj.method == 0 ? nameRules:''" required prepend-inner-icon="mdi-lock" type="password"  placeholder="Password" v-model="editedObj.password"></v-text-field>
                     <v-text-field v-if="editedObj.method == 0" :rules="editedObj.method == 0 ? nameRules:''" required prepend-inner-icon="mdi-lock" type="password"  placeholder="Confirm Password" v-model="editedObj.cpassword"></v-text-field>
