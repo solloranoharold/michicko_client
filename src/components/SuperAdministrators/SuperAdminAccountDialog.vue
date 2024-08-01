@@ -23,7 +23,7 @@
                 >
                     <!-- <v-autocomplete  dense :rules="nameRules" item-value="organization_id" item-text="organization_name"  required prepend-inner-icon="mdi-domain" placeholder="Organization"  :items="organizations" v-model="editedObj.organization_id"></v-autocomplete> -->
                      <v-autocomplete dense clearable :rules="nameRules" item-value="employee_id" item-text="fullname"  required prepend-inner-icon="mdi-account" placeholder="Employee"  :items="employees" v-model="editedObj.employee_id"></v-autocomplete>
-                     <v-autocomplete dense clearable :rules="nameRules" item-value="position_id" item-text="position"   prepend-inner-icon="mdi-domain" placeholder="Position"  :items="positions" v-model="editedObj.position_id"></v-autocomplete>
+                     <v-autocomplete readonly dense  :rules="nameRules" item-value="position_id" item-text="position"   prepend-inner-icon="mdi-domain" placeholder="Position"  :items="positions" v-model="editedObj.position_id"></v-autocomplete>
                      <v-text-field dense :filled="editedObj.method == 1" :readonly="editedObj.method == 1" :rules="nameRules" required prepend-inner-icon="mdi-account" placeholder="Username" v-model="editedObj.username"></v-text-field>
                     <v-text-field v-if="editedObj.method == 0" :rules="editedObj.method == 0 ? nameRules:''" required prepend-inner-icon="mdi-lock" type="password"  placeholder="Password" v-model="editedObj.password"></v-text-field>
                     <v-text-field v-if="editedObj.method == 0" :rules="editedObj.method == 0 ? nameRules:''" required prepend-inner-icon="mdi-lock" type="password"  placeholder="Confirm Password" v-model="editedObj.cpassword"></v-text-field>
@@ -80,7 +80,6 @@ export default {
     watch: { 
         value(val) {
             if (val) {
-                this.loadOrganizations()
                 this.loadEmployeesData()
                 this.loadPositions()
             }
@@ -107,29 +106,18 @@ export default {
     methods: {
         async loadPositions() {
             let data = await this.classPosition.loadPositions()
-            this.positions = data.filter(rec => { 
-                if (this.userInfo.position_id == 1) return rec.position_id == 2 ||  rec.position_id == 3
-                else return rec
-            })
+            this.positions = data
+            this.editedObj.position_id = 1
             console.log(this.positions ,'loadPositions')
         },
         async loadEmployeesData() {
-            let organization_id = this.$route?.params?.organization_id ?this.$route.params.organization_id: this.userInfo.organization_id 
+            let organization_id =  this.userInfo.organization_id  ? this.userInfo.organization_id : 0
             let data = await this.classEmployee.loadEmployeesOption( organization_id)  
             data.forEach(item => {
                 item.fullname = `${item.last_name} ${item.first_name} ${item.middle_name ? item.middle_name : ""}`
             });
-            this.employees = data.filter(rec => { 
-                if (this.userInfo.employee_id) return rec.employee_id != this.userInfo.employee_id
-                else return rec
-            }) 
+            this.employees = data
             console.log(this.employees ,'loadEmployeesData')
-        },
-        async loadOrganizations() {
-            let organization_id =this.$route?.params?.organization_id ?this.$route.params.organization_id: this.userInfo.organization_id 
-            this.organizations = await this.classOrg.readOrganizationsPerID(organization_id)
-            this.editedObj.organization_id = this.organizations[0].organization_id
-            console.log(this.organizations ,'loadOrganizations')
         },
         async addUpdateAccount() {
             if (this.$refs.form.validate()) {

@@ -1,7 +1,7 @@
 <template>
     <v-container fluid >
         <v-toolbar flat  dense>
-            <v-toolbar-title class="toolbarTitle"><v-icon>mdi-account-multiple</v-icon> Clients Record <v-chip v-if="userInfo.position_id==0">{{ $route.params.organization_name}}</v-chip></v-toolbar-title>
+            <v-toolbar-title class="toolbarTitle"><v-icon>mdi-account-multiple</v-icon> Clients Record <v-chip v-if="userInfo.position_id==0|| userInfo.position_id==1">{{ $route.params.organization_name}}</v-chip></v-toolbar-title>
             <v-spacer/>
             <v-btn class="textTitle" @click="addUpdateClient()" rounded dark color="#BCAAA4"><v-icon>mdi-account-plus</v-icon>Add Clients</v-btn>
         </v-toolbar>
@@ -99,7 +99,7 @@ export default {
         clients:[]
     }),
     async created() {
-         if (this.userInfo.position_id == 0 && !this.$route.params.organization_id) {
+         if ((this.userInfo.position_id == 0 || this.userInfo.position_id==1) && !this.$route.params.organization_id) {
             this.$router.push('/organization')
             return
          }

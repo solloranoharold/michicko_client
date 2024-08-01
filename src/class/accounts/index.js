@@ -7,11 +7,19 @@ export default class Accounts {
         this.tries = 0 
     }
 
+    async evaluateAccountStatus( organization_id , status ) {
+        let a = await axios.getRequest(`accounts/evaluateAccountStatus/${organization_id}/${status}`)
+        return await a
+    }
     async loginAccount( username , password ){
         if(!username || !password ){
             Swal.fire({
+                toast: true, 
+                position:'bottom-end',
                 title: "Please complete details!",
-                icon: "error"
+                icon: "error",
+                timer: 3000,
+                showConfirmButton:false 
               }); 
               return false ; 
         }
@@ -23,14 +31,48 @@ export default class Accounts {
         let a = await axios.postRequest(`accounts/updateSessionAccountStatus`, data)
         return await a
     }
+    async resetAccountPassword(data) {
+          Swal.fire({
+            title: `Are you want to  update?`,
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#90CAF9",
+            cancelButtonColor: "white",
+            confirmButtonText: `Yes, update it!`,
+         })
+              .then(async (result) => {
+                  if (result.isConfirmed) { 
+                      return await axios.postRequest(`accounts/resetAccountPassword`, data)
+                        .then(( a ) => {
+                            Swal.fire({
+                                    toast: true, 
+                                    position:'bottom-end',
+                                    title: `Data has been updated`,
+                                    icon: "success",
+                                    showConfirmButton: false,
+                                    timer:2000
+                            })
+                            return a 
+                        })
+                      
+                    
+                  }
+              })
+         
+    }
     async addUpdateAccount(data) {
         console.log(data, 'addUpdateAccount')
        
         let { username, password, cpassword, method } = data 
         if (method == 0) {
              if (password !== cpassword) {
-                Swal.fire({
-                title: `Password and Confirm Password not matched or account is deactivated `,
+                 Swal.fire({
+                timer:3000,
+                toast: true, 
+                position:'bottom-end',
+                showConfirmButton:false ,
+                title: `Password and Confirm Password not matched `,
                 icon: "error",
                 })
            
@@ -39,8 +81,12 @@ export default class Accounts {
             let users = await apiReadExistingAccount(username)
             if (users.length) {
                 Swal.fire({
+                    toast: true, 
+                    position:'bottom-end',
                     title: `User already exists!`,
                     icon: "error",
+                    showConfirmButton: false,
+                     timer:2000
                  })
                 return false 
             }
@@ -51,17 +97,22 @@ export default class Accounts {
             text: "You won't be able to revert this!",
             icon: "warning",
             showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
+            confirmButtonColor: "#90CAF9",
+            cancelButtonColor: "white",
             confirmButtonText: `Yes, ${method == 0 ? 'add' : 'update'} it!`,
+            
          })
          .then(async(result) => {
             if (result.isConfirmed) {
                 let result = await addUpdateAccount(  data)
                 console.log(result ,'result')
                 Swal.fire({
+                    toast: true, 
+                    position:'bottom-end',
                     title: `Data has been ${method == 0 ? 'added' : 'updated'}`,
                     icon: "success",
+                    showConfirmButton: false,
+                    timer:2000
                  })
                 return result;
             }

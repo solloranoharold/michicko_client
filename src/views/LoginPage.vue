@@ -21,6 +21,7 @@
                               name="password"
                               label="Password"
                               type="password"
+                              @keypress.enter="loginUser()"
                            ></v-text-field>
                         </v-form>
                      </v-card-text>
@@ -51,18 +52,18 @@ export default {
                this.loading=true
               let data =  await this.account.loginAccount( this.username , this.password )
               console.log(data, 'asdsadas')
-             if (!data) {
-                     Swal.fire({
-                        position: "top-end",
-                        title: `Username and Password not matched`,
-                        showConfirmButton: false,
-                        icon:'error',
-                        timer: 5000
-                     });
-                        this.loading = false 
-                     return false 
-                    }
-              if (!data.error) {
+             if (data.error ) {
+               Swal.fire({
+                  title: `${data.error} OR \nACCOUNT HAS BEEN DEACTIVATED CONTACT BRANCH ADMINISTRATOR`,
+                  toast: true, 
+                  position:"bottom-end",
+                  icon: "error",
+                  timer: 10000,
+                  showConfirmButton:false 
+               })
+               this.loading = false 
+               return false 
+               } else {
                
                //   if (data.isSignIn == true) {
                //    Swal.fire({
@@ -85,8 +86,9 @@ export default {
                // await this.account.updateSessionAccountStatus(  obj )
                  setTimeout(async () => {
                   this.$store.commit('STORE_USERINFO', data)
-                   Swal.fire({
-                     position: "top-end",
+                    Swal.fire({
+                     toast: true,
+                     position: "bottom-end",
                      title: `You are now Login : ${data.last_name} ${data.first_name}`,
                      showConfirmButton: false,
                      timer: 1500
@@ -94,11 +96,13 @@ export default {
                   console.log(data , 'account')
                     this.loading = false 
                    
-                    if (data.position_id != 0 && data.position_id != 1) {
-                        let navbar = [ 
+                    if (data.position_id != 0 && data.position_id != 1 && data.position_id != 2) {
+                       let navbar = [ 
+                            { name: "Dashboard", path: '/', 'icon': "mdi-home" },
                            { name: "Point of Sale", path: '/pos', 'icon': "mdi-currency-php" },
                           { name: "Clients", path: '/clients', 'icon': "mdi-account-multiple" },
-                       ]
+                        { name: "Employees", path: '/employees', 'icon': "mdi-account-multiple" },
+                        ]
                         this.$store.commit('STORE_NAVBAR' , navbar )
                       this.$store.commit('GROUP_MODULES' , [ 
                            { text: 'Services', icon: 'mdi-bottle-soda-classic-outline', name: '/inventory' },
@@ -106,7 +110,7 @@ export default {
                       ])
                         await this.$router.push('/pos')
                     }
-                    else if (data.position_id == 1) {
+                    else if (data.position_id == 2) {
                       let navbar = [ 
                          { name: "Dashboard", path: '/', 'icon': "mdi-home" },
                          { name: "Transactions", path: '/transactions', 'icon': "mdi-currency-php" },
@@ -125,12 +129,21 @@ export default {
                        this.$store.commit('STORE_NAVBAR' , navbar )
                         await this.$router.push('/')
                     }
-                    else {
+                    else if(data.position_id ==0 ) {
                        let navbar = [ 
-                        { name: "Organizations", path: '/organization', 'icon': "mdi-account-multiple" }
+                          { name: "Organizations", path: '/organization', 'icon': "mdi-account-multiple" },
+                          { name: "Super Administrators", path: '/super_administrators', 'icon': "mdi-account-multiple" },
+                          { name: "Administrators Accounts", path: '/super_administrators_accounts', 'icon': "mdi-account-multiple" }
                        ]
-                       this.$store.commit('STORE_NAVBAR' , navbar )
-                        await this.$router.push('/organization')
+                       this.$store.commit('STORE_NAVBAR', navbar)
+                         await this.$router.push('/organization')
+                       
+                    } else {
+                     let navbar = [ 
+                        { name: "Organizations", path: '/organization', 'icon': "mdi-account-multiple" },
+                      ]
+                       this.$store.commit('STORE_NAVBAR', navbar)
+                         await this.$router.push('/organization')
                     }
                   //   if(data.position_id != 0 && data.position_id!= 1 )await this.$router.push('/pos')
                   //    else await this.$router.push('/')

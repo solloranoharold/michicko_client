@@ -1,5 +1,8 @@
 <template>
     <v-container fluid v-if="!loading" class="textTitle">
+        <v-toolbar flat dense>
+            <v-toolbar-title>Dashboard <v-chip v-if="userInfo.position_id==0|| userInfo.position_id==1">{{ $route.params.organization_name}}</v-chip></v-toolbar-title>
+        </v-toolbar>
        <v-row no-gutters>
         <v-col cols="12" md="3" lg="3">
              <v-menu
@@ -252,7 +255,7 @@ export default {
        },
     },
     async created() {
-        if (this.userInfo.position_id == 0 && !this.$route.params.organization_id) {
+        if ((this.userInfo.position_id == 0 || this.userInfo.position_id == 1) && !this.$route.params.organization_id) {
             this.$router.push('/organization')
             return
          }

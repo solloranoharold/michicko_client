@@ -9,7 +9,11 @@ export default class Services{
         if (method == 0) {
             let clients = await apiReadExistingService(data)
             if (clients.length > 0) {
-                 Swal.fire({
+                Swal.fire({
+                    timer:3000,
+                    toast: true, 
+                    position:'bottom-end',
+                    showConfirmButton:false , 
                     title: `Service already exists!`,
                     icon: "error",
                  })
@@ -24,14 +28,18 @@ export default class Services{
                 text: "You won't be able to revert this!",
                 icon: "warning",
                 showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
+                 confirmButtonColor: "#90CAF9",
+                cancelButtonColor: "white",
                 confirmButtonText: `Yes, ${method == 0 ? 'add' : 'update'} it!`,
             }).then(async(result) => {
                 if (result.isConfirmed) {
                     let result = await addUpdateService(  data )
                     console.log(result ,'result')
                     Swal.fire({
+                        timer:3000,
+                        toast: true, 
+                        position:'bottom-end',
+                        showConfirmButton:false , 
                         title: `Data has been ${method == 0 ? 'added' : 'updated'}`,
                         icon: "success",
                     })

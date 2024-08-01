@@ -15,6 +15,8 @@ import InventoryView from '@/components/Inventory/InventoryView.vue'
 import ProductView from '@/components/Products/ProductsView.vue'
 import DashboardView from '@/components/Dashboard/DashboardView.vue'
 import CashlessView from '@/components/Cashless/CashlessView.vue';
+import SuperAdministrators from '@/components/SuperAdministrators/SuperAdministrators.vue'
+import SuperAdministratorAccounts from '@/components/SuperAdministrators/SuperAdministratorAccounts.vue';
 import Swal from 'sweetalert2'
 import store from '@/store'
 // import Accounts from '@/class/accounts';
@@ -89,6 +91,19 @@ const routes = [
     name: 'cashless',
     component: CashlessView
   },
+    {
+    path: '/super_administrators',
+    name: 'super_administrators',
+    component: SuperAdministrators
+  },
+  {
+    path: '/super_administrators_accounts',
+    name: 'super_administrators_accounts',
+    component: SuperAdministratorAccounts
+  },
+    // 
+    // 
+  //  
   
   // 
   // {
@@ -110,56 +125,28 @@ const router = new VueRouter({
 })
 
 
-router.beforeEach(async(to , from , next)=>{
- 
-  if (to.path === '/login') {
-    if (Cookies.get('token')) next('/')
+router.beforeEach(async (to, from, next) => {
+  
+  let path = to.path === '/login' 
+  if (path) {
+    if (store.state.userInfo != null) next('/')
     else next()
-    // console.log("Cookies", Cookies.get('token'))
-      // if(store.state.userInfo != null ){
-      //   next('/')
-      // }else{
-      //   next()
-      // }
   } else {
-    if (!Cookies.get('token')) {
-      if (store.state.userInfo != null) {
-          store.state.userInfo.isSignIn = false
-        console.log(store.state)
-        store.state.userInfo = null
-          Swal.fire({
-            position: "top-end",
-            icon: "warning",
-            title: "Session Expired",
-            showConfirmButton: false,
-            timer: 1500
-          });
-        next('/login')
-          // let obj = {account_id : store.state.userInfo.account_id,isSignIn : 0 }
-          // await accounts.updateSessionAccountStatus(obj).then(() => { 
-          //     store.state.userInfo = null
-          //     Swal.fire({
-          //       position: "top-end",
-          //       icon: "warning",
-          //       title: "Session Expired",
-          //       showConfirmButton: false,
-          //       timer: 1500
-          //   });
-          //   next('/login')
-          // })
-      } else {
-        next('/login')
-        }
-      
-      
-     }
-    else next()
-    // console.log("Cookies", Cookies.get('token'))
-    // if(store.state.userInfo == null ){
-    //   next('/login')
-    // }else{
-    //   next()
-    // }
+    let token = Cookies.get('token')
+    
+    if (!token) {
+        Swal.fire({
+          position: "top-end",
+          icon: "warning",
+          title: "Session Expired",
+          showConfirmButton: false,
+          timer: 1500
+        });
+      store.state.userInfo = null
+      next('/login')
+    } else {
+      next()
+    }
   }
   
 })

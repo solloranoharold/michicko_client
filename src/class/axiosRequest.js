@@ -76,19 +76,20 @@ export default class AxiosRequest {
             headers: {
                 Authorization: token 
             }
-        })
-            if (response.data.error) {
-                Swal.fire({
-                    title: `${response.data.error} OR ACCOUNT HAS BEEN DEACTIVATED CONTACT BRANCH ADMINISTRATOR`,
-                    toast: true, 
-                    position:"top-end",
-                    icon: "error",
-                    timer:2000
-                })
-                return false 
+            })
+            console.log(response , 'postRequest')
+            // if (response.data.error) {
+            //     Swal.fire({
+            //         title: `${response.data.error} OR ACCOUNT HAS BEEN DEACTIVATED CONTACT BRANCH ADMINISTRATOR`,
+            //         toast: true, 
+            //         position:"top-end",
+            //         icon: "error",
+            //         timer:2000
+            //     })
+            //     return false 
 
-             }
-        return  response.data 
+            //  }
+             return  response.data 
         } catch (error) {
         Swal.fire({
             title: error.message,

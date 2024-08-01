@@ -180,7 +180,7 @@ export default {
                     Swal.fire({
                         toast: true,
                         position:'bottom-end',
-                        title: `No commission found`,
+                        title: `No sales invoice found`,
                         icon: "info",
                         timer: 1000,
                         showConfirmButton:false

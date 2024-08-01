@@ -1,7 +1,7 @@
 <template>
     <v-container fluid class="textTitle">
         <v-toolbar flat dense class="toolbarTitle">
-            <v-toolbar-title><v-icon>mdi-currency-php</v-icon>Transactions History</v-toolbar-title>
+            <v-toolbar-title><v-icon>mdi-currency-php</v-icon>Transactions History <v-chip v-if="userInfo.position_id==0 || userInfo.position_id==1">{{ $route.params.organization_name}}</v-chip></v-toolbar-title>
         </v-toolbar>
         <v-card style="height: 700px;"  v-if="!loading">
             <v-simple-table dense class="table-container textTitle">
@@ -9,7 +9,7 @@
                     <v-toolbar flat dense>
                     <label class="textTitle" style="font-size: 13px;"> Page {{page}} of {{ totalPages }}, Total Items: {{ totalCountTransaction }}</label>
                     <v-spacer/>
-                         <v-btn :disabled="userInfo.position==0" class="textTitle" @click="$router.push('/pos')"  rounded dark color="#BCAAA4"><v-icon>mdi-content-cut</v-icon>Create Transactions</v-btn>
+                         <v-btn :disabled="userInfo.position==0 || userInfo.position==1" class="textTitle" @click="$router.push('/pos')"  rounded dark color="#BCAAA4"><v-icon>mdi-content-cut</v-icon>Create Transactions</v-btn>
                      </v-toolbar>
                     <br/>
                     <i class="textTitle" style="font-size: 11px;">click<v-icon>mdi-magnify</v-icon> to search specific data</i>
@@ -132,7 +132,7 @@ export default {
         }  
     },
     async created() {
-        if (this.userInfo.position_id == 0 && !this.$route.params.organization_id) {
+        if ((this.userInfo.position_id == 0  || this.userInfo.position_id == 1) && !this.$route.params.organization_id) {
             this.$router.push('/organization')
             return
         }

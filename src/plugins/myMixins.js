@@ -11,7 +11,7 @@ const myPlugins = {
             }),
             computed: {
                 ...mapState([
-                    'userInfo','navigationDrawer','masterDrawer','groupModules'
+                    'userInfo','navigationDrawer','masterDrawer','groupModules','posDraftTransactions'
                 ]),
             },
             methods: {
@@ -19,7 +19,8 @@ const myPlugins = {
                     'STORE_USERINFO',
                     'STORE_NAVBAR',
                     'MASTER_NAVBAR',
-                    'GROUP_MODULES'
+                    'GROUP_MODULES',
+                    'DRAFT_TRANSACTIONS'
                 ]),
             }
         })

@@ -14,6 +14,10 @@ export default class Employees {
             let users = await readExistingEmployees( last_name , first_name , organization_id )
             if(users.length){
                 Swal.fire({
+                    timer:3000,
+                    toast: true, 
+                    position:'bottom-end',
+                    showConfirmButton:false ,
                     title: "Employee data exists",
                     icon: "error"
                   });
@@ -27,14 +31,18 @@ export default class Employees {
             text: "You won't be able to revert this!",
             icon: "warning",
             showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
+            confirmButtonColor: "#90CAF9",
+            cancelButtonColor: "white",
             confirmButtonText: `Yes, ${method == 0 ? 'add' : 'update'} it!`,
          }).then(async(result) => {
             if (result.isConfirmed) {
                 let result = await addUpdateDataEmployee( data)
                 console.log(result ,'result')
                 Swal.fire({
+                    timer:3000,
+                    toast: true, 
+                    position:'bottom-end',
+                    showConfirmButton:false ,
                     title: `Data has been ${method == 0 ? 'added' : 'updated'}`,
                     icon: "success",
                  })
@@ -46,9 +54,9 @@ export default class Employees {
 
     }
 
-    async getEmployeesTotalCount(employee_id,  organization_id ){
-        console.log('/getEmployeesTotalCount')
-        let a =  await getApiEmployeesTotalCount(employee_id,  organization_id)
+    async getEmployeesTotalCount(employee_id,  organization_id , search  ){
+        console.log('/getEmployeesTotalCount' , search , 'search')
+        let a =  await getApiEmployeesTotalCount(employee_id,  organization_id , search )
         return await a 
         // console.log(a , 'getEmployeesTotalCount')
     }
@@ -62,6 +70,11 @@ export default class Employees {
         let a = await getApiEmployeesOptions( organization_id)
         return await a 
     } 
+    async searchEmployee(organization_id, search) {
+        console.log(organization_id, search , ' searchEmployee')
+         let response = await axios.getRequest(`employees/searchEmployee/${organization_id}/${search}`)
+        return await response
+    }
 
     
 }
@@ -73,8 +86,8 @@ async function getApiEmployeesOptions( organization_id ){
     let response = await axios.getRequest(`employees/loadEmployeesOption/${organization_id}`)
     return await response
 }
-async function getApiEmployeesTotalCount(employee_id ,organization_id){
-    let response = await axios.getRequest(`employees/employeeTotalCount/${employee_id}/${organization_id}`)
+async function getApiEmployeesTotalCount(employee_id ,organization_id , search ){
+    let response = await axios.getRequest(`employees/employeeTotalCount/${employee_id}/${organization_id}/${search}`)
     return await response
 }
 async function addUpdateDataEmployee(data) {

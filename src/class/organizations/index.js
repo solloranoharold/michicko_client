@@ -4,7 +4,18 @@ import AxiosRequest from '../axiosRequest'
 const axios = new AxiosRequest()
 export default class Organizations { 
     constructor() { }
-    
+    async organizationsTotalCount(employee_id , search) {
+         let a = await axios.getRequest(`organizations/organizationsTotalCount/${employee_id}/${search}`)
+        return await a
+    }
+    async searchOrganization(employee_id , search) {
+         let a = await axios.getRequest(`organizations/searchOrganization/${employee_id}/${search}`)
+        return await a
+    }
+    async readOrganizationsAdmin( employee_id) {
+         let a = await axios.getRequest(`organizations/readOrganizationsAdmin/${employee_id}`)
+        return await a
+    }
     async readOrganizations() {
         let a = await getApiOrganizations()
         return await a 
@@ -21,6 +32,10 @@ export default class Organizations {
                 Swal.fire({
                     title: `Organization  already exists!`,
                     icon: "error",
+                     timer:3000,
+                    toast: true, 
+                    position:'bottom-end',
+                    showConfirmButton:false ,
                 })
                 return false
             }
@@ -32,8 +47,8 @@ export default class Organizations {
                 text: "You won't be able to revert this!",
                 icon: "warning",
                 showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
+               confirmButtonColor: "#90CAF9",
+                cancelButtonColor: "white",
                 confirmButtonText: `Yes, ${method == 0 ? 'add' : 'update'} it!`,
             }).then(async(result) => {
                 if (result.isConfirmed) {
@@ -42,6 +57,10 @@ export default class Organizations {
                     Swal.fire({
                         title: `Data has been ${method == 0 ? 'added' : 'updated'}`,
                         icon: "success",
+                         timer:3000,
+                        toast: true, 
+                        position:'bottom-end',
+                        showConfirmButton:false ,
                     })
                     return result;
                 }

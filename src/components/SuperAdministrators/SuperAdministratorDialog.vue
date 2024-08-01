@@ -20,21 +20,16 @@
                     lazy-validation
                     class="textTitle"
                 >
-                <!-- <v-autocomplete :rules="nameRules" auto-select-first item-value="organization_id" item-text="organization_name"  required prepend-inner-icon="mdi-domain" placeholder="Organization"  :items="organizations" v-model="editedObj.organization_id"></v-autocomplete> -->
-                    <v-text-field :rules="nameRules" required prepend-inner-icon="mdi-account" placeholder="Last Name" v-model="editedObj.last_name"></v-text-field>
+               <v-text-field :rules="nameRules" required prepend-inner-icon="mdi-account" placeholder="Last Name" v-model="editedObj.last_name"></v-text-field>
                     <v-text-field :rules="nameRules"  required prepend-inner-icon="mdi-account" placeholder="First Name" v-model="editedObj.first_name"></v-text-field>
                     <v-text-field  prepend-inner-icon="mdi-account" placeholder="Middle Name(optional)" v-model="editedObj.middle_name"></v-text-field>
-                    <v-text-field required prepend-inner-icon="mdi-email" placeholder="Email" :rules="emailRules" v-model="editedObj.email"></v-text-field>
-
+                    
+                   
                     <v-layout>
-                        <v-autocomplete :rules="nameRules"  required prepend-inner-icon="mdi-account" placeholder="Position"  :items="positions" v-model="editedObj.position"></v-autocomplete>
-                        <v-text-field :rules="nameRules"  required prepend-inner-icon="mdi-percent" placeholder="Commissions" type="number" min="1" v-model="editedObj.commissions"></v-text-field>
+                        <v-text-field required prepend-inner-icon="mdi-email" placeholder="Email" :rules="emailRules" v-model="editedObj.email"></v-text-field>
+                       <v-autocomplete :rules="nameRules"  required prepend-inner-icon="mdi-gender-male" placeholder="Gender"  :items="['Male' , 'Female']" v-model="editedObj.gender"></v-autocomplete>
                     </v-layout>
-                     <v-layout>
-                    <v-text-field :rules="nameRules"  required prepend-inner-icon="mdi-counter" placeholder="Age" type="number" min="1" v-model="editedObj.age"></v-text-field>
-                    <v-autocomplete :rules="nameRules"  required prepend-inner-icon="mdi-gender-male" placeholder="Gender"  :items="['Male' , 'Female']" v-model="editedObj.gender"></v-autocomplete>
-                    </v-layout>
-                    <v-textarea :rules="nameRules"  required prepend-inner-icon="mdi-map-marker" placeholder="Address" v-model="editedObj.address"></v-textarea>
+                     <v-textarea :rules="nameRules"  required prepend-inner-icon="mdi-map-marker" placeholder="Address" v-model="editedObj.address"></v-textarea>
                 </v-form>
                     <v-card-actions class="justify-end">
                         <v-btn :disabled="!valid"
@@ -117,19 +112,13 @@ export default {
         
     },
     async created() {
-        await this.loadOrganizations()
+       
     },
     methods: {
-        async loadOrganizations() {
-            let organization_id = this.$route?.params?.organization_id ? this.$route.params.organization_id: this.userInfo.organization_id
-            await this.classOrg.readOrganizationsPerID(organization_id).then((data) => { 
-                this.editedObj.organization_id = data[0].organization_id
-            })
-            
-        },
        async saveUpdateEmployee(){
             if (this.$refs.form.validate()) {
-                this.loading=true
+                this.loading = true
+               this.editedObj.position = 'ADMIN'
                await this.classEmployees.addUpdateEmployee(this.editedObj).then(() => {
                     this.loading = false 
                     this.close()

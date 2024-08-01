@@ -1,7 +1,7 @@
 <template>
-    <v-container fluid>
+     <v-container fluid>
         <v-toolbar flat  dense>
-            <v-toolbar-title class="toolbarTitle"><v-icon>mdi-account-multiple</v-icon> Accounts Record <v-chip v-if="userInfo.position_id==0 || userInfo.position_id==1">{{ $route.params.organization_name}}</v-chip></v-toolbar-title>
+            <v-toolbar-title class="toolbarTitle"><v-icon>mdi-account-multiple</v-icon> Accounts Record</v-toolbar-title>
             <v-spacer/>
             <v-btn class="textTitle" @click="addUpdateAccount()"  rounded dark color="#BCAAA4"><v-icon>mdi-account-plus</v-icon>Add Accounts</v-btn>
         </v-toolbar>
@@ -37,7 +37,7 @@
                     <td>{{  `${item.last_name} ${item.first_name} ${item.middle_name ? item.middle_name: ''}`}}</td>
                     <td> {{ item.username }}</td>
                     <td> 
-                        <v-chip small outlined :color="getRandomColor ">
+                        <v-chip small outlined :color="item.position_id == 1 ?'blue':'orange' ">
                            <v-icon>mdi-account</v-icon> {{ item.account_position }}
                         </v-chip>
                     </td>
@@ -56,9 +56,9 @@
                             </template>
                             <span>Edit</span>
                         </v-tooltip>
-                             <v-tooltip bottom>
+                         <v-tooltip bottom>
                             <template v-slot:activator="{ on, attrs }">
-                                <v-icon color="indigo" @click="resetPassword(item )"  v-bind="attrs"
+                                <v-icon color="green" @click="resetPassword(item )"  v-bind="attrs"
                                 v-on="on">
                                 mdi-lock-reset
                                 </v-icon>
@@ -100,14 +100,13 @@
         <LoaderView v-else/>
         <accounts-dialog :dialog="dialog" :saveDataObj="getObj" @closeDialog="closeDialog"/>
     </v-container>
-
 </template>
 <script>
-import AccountsDialog from './AccountsDialog.vue'
+import AccountsDialog from './SuperAdminAccountDialog.vue'
 import Accounts from '@/class/accounts/'
 import LoaderView from '@/views/LoaderView.vue';
 export default {
-  components: { AccountsDialog , LoaderView },
+     components: { AccountsDialog , LoaderView },
     data: () => ({
         classAccount: new Accounts(),
         accounts:[],
@@ -121,32 +120,12 @@ export default {
         hasPage: true,
         loading:false 
     }),
-    computed:{
+    computed: {
         totalPages(){
             return  Math.ceil(this.totalCountAccounts / this.itemsPerPage);
-        },
-        getRandomColor() {
-            // Function to generate a random number between 0 and 255
-            const random255 = () => Math.floor(Math.random() * 256);
-
-            // Generate random values for red, green, and blue
-            const red = random255();
-            const green = random255();
-            const blue = random255();
-
-            // Convert decimal to hexadecimal and ensure two digits
-            const componentToHex = (c) => {
-                const hex = c.toString(16);
-                return hex.length === 1 ? "0" + hex : hex;
-            };
-
-            // Combine red, green, and blue components
-            const color = "#" + componentToHex(red) + componentToHex(green) + componentToHex(blue);
-
-            return color;
-        },
-    }, 
-    watch: {
+        }
+    },
+     watch: {
         page(val) {
             console.log(val, 'sds')
             this.loadNewData(val)
@@ -155,16 +134,11 @@ export default {
             if(!val) this.evaluteAccounts()
         }   
     },
-    async created() {
-        if ((this.userInfo.position_id == 0 || this.userInfo.position_id == 1) && !this.$route.params.organization_id) {
-            this.$router.push('/organization')
-            return
-         }
-
+     async created() {
         await this.evaluteAccounts()
-   },
+    },
     methods: {
-         async resetPassword(item) {
+        async resetPassword(item) {
             let obj = { 
                 account_id: item.account_id, 
                 username: item.username
@@ -180,7 +154,7 @@ export default {
         },
         async getTotalEmployeeCount() {
             this.loading=true
-            let organization_id =this.$route?.params?.organization_id ?this.$route.params.organization_id: this.userInfo.organization_id
+            let organization_id = this.userInfo.organization_id ? this.userInfo.organization_id : 0
             let a =  await this.classAccount.getAccountTotalCount( this.userInfo.employee_id , organization_id ,this.search)
              this.totalCountAccounts = a.TOTAL 
             console.log(this.totalCountAccounts , 'this.totalCountAccounts')
@@ -188,7 +162,7 @@ export default {
         },
         async loadAccountsPerPage() {
             this.loading=true
-             let organization_id =this.$route?.params?.organization_id ?this.$route.params.organization_id: this.userInfo.organization_id
+             let organization_id = this.userInfo.organization_id ? this.userInfo.organization_id : 0
             let data = await this.classAccount.loadAccounts(this.userInfo.employee_id , organization_id , this.page , this.itemsPerPage )
            
             this.accounts = data
@@ -203,7 +177,7 @@ export default {
                 return 
              }
              await this.evaluteAccounts()
-            let organization_id =this.$route?.params?.organization_id ?this.$route.params.organization_id: this.userInfo.organization_id
+            let organization_id = this.userInfo.organization_id ? this.userInfo.organization_id : 0
             let data = await this.classAccount.loadAccounts(this.userInfo.employee_id , organization_id , this.page , this.itemsPerPage )
             
             this.accounts = data
@@ -247,7 +221,7 @@ export default {
                 return;
             }
              await this.evaluteAccounts()
-             let organization_id =this.$route?.params?.organization_id ?this.$route.params.organization_id: this.userInfo.organization_id
+            let organization_id = this.userInfo.organization_id ? this.userInfo.organization_id : 0
             let searchData= await this.classAccount.searchAccount(this.userInfo.employee_id , organization_id , this.search )
             this.accounts = searchData
             this.hasPage=false 
@@ -261,11 +235,6 @@ export default {
         }
         
    }
+
 }
 </script>
-<style scoped>
-   .table-container {
-  height: 700px; /* Set the desired height */
-  overflow-y: auto; /* Make the table scrollable */
-}
-</style>

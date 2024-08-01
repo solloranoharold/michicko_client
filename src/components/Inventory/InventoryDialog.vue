@@ -26,11 +26,11 @@
                     <v-text-field :rules="nameRules" label="Product Name" required prepend-inner-icon="mdi-bottle-soda-classic-outline" placeholder="Product" v-model="editedObj.product_name"></v-text-field> 
                     <v-layout fill-height>
                         <v-autocomplete label="Unit" :rules="nameRules"  required prepend-inner-icon="mdi-equal" placeholder="Unit"  :items="units" v-model="editedObj.unit"></v-autocomplete>
-                        <v-text-field label="Net Value"  :rules="nameRules" type="number" min="1"  required prepend-inner-icon="mdi-cylinder"  placeholder="Net Value" v-model="editedObj.net_value"></v-text-field> 
-                        <v-text-field label="Quantity"  :readonly="editedObj.method == 1 " :rules="nameRules" type="number" :min="1" required prepend-inner-icon="mdi-plus-box" placeholder="Quantity" v-model="editedObj.quantity"></v-text-field> 
+                        <v-text-field label="Unit Value"  :rules="nameRules" type="number" min="1"  required prepend-inner-icon="mdi-cylinder"  placeholder="Unit Value" v-model="editedObj.net_value"></v-text-field> 
+                        <v-text-field label="Quantity (piece)"  :readonly="editedObj.method == 1 " :rules="nameRules" type="number" :min="1" required prepend-inner-icon="mdi-plus-box" placeholder="Quantity (piece)" v-model="editedObj.quantity"></v-text-field> 
                         
                     </v-layout>
-                    <v-text-field label="Add Stocks"  v-if="editedObj.method == 1" :rules="editedObj.method == 1 ? nameRules : ''" type="number" :min="1" required prepend-inner-icon="mdi-plus-box" placeholder="Quantity" v-model="historyObj.added_quantity"></v-text-field> 
+                    <v-text-field label="Add Stocks"  v-if="editedObj.method == 1" :rules="editedObj.method == 1 ? nameRules : ''" type="number" :min="1" required prepend-inner-icon="mdi-plus-box" placeholder="Quantity (piece)" v-model="historyObj.added_quantity"></v-text-field> 
                     
                     <v-card-actions class="justify-end">
                         <v-btn :disabled="!valid"
@@ -95,6 +95,8 @@ export default {
             console.log(this.organizations ,'loadOrganizations')
         },
         async addUpdateProduct() {
+            let organization_id = this.$route?.params?.organization_id ? this.$route.params.organization_id : this.userInfo.organization_id
+            this.historyObj.organization_id = organization_id 
             if (this.$refs.form.validate()) {
                  if (this.editedObj.method == 1) {
                     if (this.historyObj.added_quantity <= 0) {

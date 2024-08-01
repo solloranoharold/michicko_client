@@ -19,7 +19,7 @@
                         <v-text-field class="textTitle" v-model="search" color="#BCAAA4" clearable dense label="Search" append-icon="mdi-magnify" @click:append="searchServices"></v-text-field>
                     </v-flex>
                     <v-spacer/>
-                    <label style="font-size: 11px;">Legends :  <v-chip x-small color="red" text-color="white" > Not Active </v-chip><v-chip x-small color="black" outlined text-color="black"> Active </v-chip></label>
+                    <label style="font-size: 11px;">Legends :  <v-chip x-small color="#B0BEC5" text-color="white" > Not Active </v-chip><v-chip x-small color="black" outlined text-color="black"> Active </v-chip></label>
                 </v-toolbar>
             </template>
             <thead>
@@ -31,7 +31,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(item , i) in services" :key="i" :style="{'background-color': item.status == 1  ? 'transparent' : '#EF9A9A'}">
+                <tr v-for="(item , i) in services" :key="i" :style="{'background-color': item.status == 1  ? 'transparent' : '#B0BEC5'}">
                     <td>
                         <v-chip outlined small color="black">
                             {{ item.category_name }}

@@ -2,7 +2,7 @@
     
     <v-container fluid>
         <v-toolbar flat dense class="toolbarTitle">
-            <v-toolbar-title>Cashless Methods</v-toolbar-title>
+            <v-toolbar-title>Cashless Methods <v-chip v-if="userInfo.position_id==0 || userInfo.position_id==1">{{ $route.params.organization_name}}</v-chip></v-toolbar-title>
             <v-spacer/>
              <v-btn class="textTitle" @click="addUpdatePaymentMethod()"  rounded dark color="#BCAAA4"><v-icon>mdi-credit-card-marker</v-icon>Add Payment Method</v-btn>
         </v-toolbar>
@@ -46,7 +46,7 @@ export default {
        epayments:[]
     }),
     async created() {
-        if (this.userInfo.position_id == 0 && !this.$route.params.organization_id) {
+        if ((this.userInfo.position_id == 0 || this.userInfo.position_id == 1) && !this.$route.params.organization_id) {
             this.$router.push('/organization')
             return
         }

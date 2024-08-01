@@ -9,7 +9,8 @@ export default new Vuex.Store({
     userInfo: null,
     navigationDrawer: [],
     masterDrawer: [],
-    groupModules:[]
+    groupModules: [],
+    posDraftTransactions:[]
   },
   mutations: {
     STORE_USERINFO : (state , newState )=>{
@@ -23,6 +24,9 @@ export default new Vuex.Store({
     },
     GROUP_MODULES: (state, newState) => {
       state.groupModules = newState
+    },
+    DRAFT_TRANSACTIONS:(state, newState) => {
+      state.posDraftTransactions = newState
     },
   },
   actions: {

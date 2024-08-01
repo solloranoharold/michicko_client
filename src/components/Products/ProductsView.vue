@@ -1,7 +1,7 @@
 <template>
     <v-container fluid >
             <v-toolbar flat  dense>
-                <v-toolbar-title class="toolbarTitle"><v-icon>mdi-monitor</v-icon> Products <v-chip v-if="userInfo.position_id==0">{{ $route.params.organization_name}}</v-chip></v-toolbar-title>
+                <v-toolbar-title class="toolbarTitle"><v-icon>mdi-monitor</v-icon> Products <v-chip v-if="userInfo.position_id==0 || userInfo.position_id==1">{{ $route.params.organization_name}}</v-chip></v-toolbar-title>
                 <v-spacer/>
                 <v-btn class="textTitle" @click="addUpdateProduct()" rounded dark color="#BCAAA4"><v-icon>mdi-bottle-soda-classic-outline</v-icon>Add Product</v-btn>
             </v-toolbar>
@@ -19,7 +19,7 @@
                         <v-text-field v-model="search" color="#BCAAA4" clearable dense label="Search" append-icon="mdi-magnify" @click:append="searchProducts"></v-text-field>
                     </v-flex>
                     <v-spacer/>
-                     <label style="font-size: 11px;">Legends :  <v-chip x-small color="red" text-color="white" > Not enough quantity </v-chip><v-chip x-small color="black" outlined text-color="black">Enough Quantity </v-chip></label>
+                     <label style="font-size: 11px;">Legends :  <v-chip x-small color="#B0BEC5" text-color="white" > Not enough quantity </v-chip><v-chip x-small color="black" outlined text-color="black">Enough Quantity </v-chip></label>
                 </v-toolbar>
             </template>
             <thead>
@@ -33,7 +33,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(item , i) in inventory" :key="i" :style="{'background-color': item.quantity <= 5  ? '#EF9A9A' : 'transparent' }">
+                <tr v-for="(item , i) in inventory" :key="i" :style="{'background-color': item.quantity <= 5  ? '#B0BEC5' : 'transparent' }">
                     <td>{{  item.product_id }}</td>
                     <td> {{ item.product_name }} </td>
                      <td> 
@@ -104,7 +104,7 @@ export default {
         } 
     },
     async created() {
-        if (this.userInfo.position_id == 0 && !this.$route.params.organization_id) {
+        if ((this.userInfo.position_id == 0 || this.userInfo.position_id == 1) && !this.$route.params.organization_id) {
             this.$router.push('/organization')
             return
          }

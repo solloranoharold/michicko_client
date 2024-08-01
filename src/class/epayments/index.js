@@ -10,6 +10,10 @@ export default class Epayments {
             let epayments = await this.readExistingEPayment(data)
             if (epayments.length > 0) {
                 Swal.fire({
+                    timer:3000,
+                    toast: true, 
+                    position:'bottom-end',
+                    showConfirmButton:false ,
                     title: `Payment Method  already exists!`,
                     icon: "error",
                 })
@@ -22,7 +26,7 @@ export default class Epayments {
                 text: "You won't be able to revert this!",
                 icon: "warning",
                 showCancelButton: true,
-                confirmButtonColor: "#3085d6",
+                confirmButtonColor: "#90CAF9",
                 cancelButtonColor: "white",
                 confirmButtonText: `Yes, ${method == 0 ? 'add' : 'update'} it!`,
             }).then(async(result) => {
@@ -30,6 +34,10 @@ export default class Epayments {
                     let result = await this.addUpdateEpayment(  data )
                     console.log(result ,'result')
                     Swal.fire({
+                        timer:3000,
+                    toast: true, 
+                    position:'bottom-end',
+                    showConfirmButton:false ,
                         title: `Data has been ${method == 0 ? 'added' : 'updated'}`,
                         icon: "success",
                     })

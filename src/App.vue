@@ -4,7 +4,7 @@
       app v-if="userInfo!=null"
     >
     <v-icon @click="drawer=!drawer">mdi-menu</v-icon>
-    <v-toolbar-title class="mainbarTitle"> <h5>{{ userInfo.organization_name ? userInfo.organization_name : 'MICHIKO SALON SUPER ADMINISTRATOR' }}</h5></v-toolbar-title>
+    <v-toolbar-title class="mainbarTitle"> <h5> (MERS) {{ userInfo.organization_name ? `${userInfo.organization_name} ${userInfo.account_position}`  : userInfo.account_position}}</h5></v-toolbar-title>
     <v-spacer/>
       <v-menu
         bottom
@@ -28,14 +28,10 @@
               </v-list-item-title>
               <v-list-item-icon >
                 <v-img max-width="50" src='./assets/new.gif' v-if="notif.isRead"></v-img>
-              <!-- <v-icon large v-if="notif.isRead == 1 ">mdi-circle-small</v-icon> -->
-             </v-list-item-icon>
+               </v-list-item-icon>
             </v-list-item>
         
             <v-divider/>
-            <!-- <center>
-              <v-btn text small ><v-icon>{{ !hasMore ? 'mdi-arrow-down-thin' : 'mdi-arrow-up-thin' }}</v-icon>{{ !hasMore ? 'Show more': "Hide" }}</v-btn>
-            </center> -->
           </v-list>
         </v-card>
       </v-menu>
@@ -74,7 +70,7 @@
         app dark
         color="#BCAAA4"
         v-model="drawer"
-        v-if="userInfo!=null && userInfo.position_id != 0 "
+        v-if="userInfo!=null && (userInfo.position_id != 0 && userInfo.position_id != 1) "
         class="textTitle"
       >
         <v-list>
@@ -101,7 +97,7 @@
             <v-list-item-title>{{ item.name }}</v-list-item-title>
           </v-list-item>
            <v-list-group
-           v-if="userInfo.position_id != 0"
+           v-if="userInfo.position_id != 0 && userInfo.position_id != 1"
               :value="true"
               prepend-icon="mdi-bottle-soda-classic-outline"
               no-action
@@ -119,7 +115,7 @@
         
         </v-list>
       </v-navigation-drawer>
-          <v-navigation-drawer
+    <v-navigation-drawer
         app dark
         color="#BCAAA4"
         v-model="drawer"
@@ -139,13 +135,20 @@
         </v-list>
 
         <v-divider></v-divider>
-
+          <v-list nav dense>
+            <v-list-item link v-for="(item , i ) in navigationDrawer" :key="i" :to="item.path">
+            <v-list-item-icon>
+              <v-icon>{{ item.icon }}</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>{{ item.name }}</v-list-item-title>
+          </v-list-item>
+          </v-list>
         <v-list
           nav
           dense
           v-if="masterDrawer.length"
         >
- 
+           
           <v-list-item link v-for="(item , i ) in masterDrawer" :key="i" :to="{
             name: item.name, 
             params: JSON.parse(JSON.stringify(item.item))
@@ -304,6 +307,9 @@ export default {
         this.classAccount.updateSessionAccountStatus(obj)
         Cookies.remove('token')
         this.$store.commit('STORE_USERINFO', null)
+        this.$store.commit('MASTER_NAVBAR', [])
+        this.$store.commit('STORE_NAVBAR', [])
+        this.$store.commit('GROUP_MODULES' , [])
         alert('You are now logout!')
         this.$router.push('/login')
       }
