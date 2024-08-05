@@ -197,7 +197,8 @@ export default {
             this.dialog = true
         },
         closeDialog(val) {
-            this.dialog =val
+            this.dialog = val
+            this.searchEmployee()
         }
     }
 }
