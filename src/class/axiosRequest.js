@@ -65,7 +65,8 @@ export default class AxiosRequest {
             toast: true, 
             position:"top-end",
             timer:2000
-            })
+        })
+            throw error;
         }
     }
     async postRequest(path, body  ) {
@@ -97,7 +98,8 @@ export default class AxiosRequest {
             toast: true, 
             position:"top-end",
             timer:2000
-            })
+        })
+             throw error;
         }
     }
 }
