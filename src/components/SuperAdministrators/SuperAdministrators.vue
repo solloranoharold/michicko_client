@@ -160,25 +160,37 @@ export default {
             await this.loadEmployeesPerPage()
         },
         async getTotalEmployeeCount() {
+            this.loading = true 
             let organization_id = this.userInfo.organization_id ? this.userInfo.organization_id : 0
-            let a =  await this.classEmployee.getEmployeesTotalCount( this.userInfo.employee_id , organization_id , this.search )
-            this.totalCountEmployees = a.TOTAL 
-            console.log( this.totalCountEmployees, ' this.totalCountEmployees')
+            await this.classEmployee.getEmployeesTotalCount(this.userInfo.employee_id, organization_id, this.search).then(data => { 
+                this.loading = false 
+                this.totalCountEmployees = data.TOTAL 
+                console.log( this.totalCountEmployees, ' this.totalCountEmployees')
+             })
+  
         },
         async loadEmployeesPerPage() {
         let organization_id = this.userInfo.organization_id ? this.userInfo.organization_id : 0
-            let data = await this.classEmployee.loadEmployees(this.userInfo.employee_id  , organization_id , this.page , this.itemsPerPage )
-            console.log(data , 'loadEmployeesPerPage')
-           this.employees = data
-            this.totalItems = this.employees.length 
+            this.loading=true
+            await this.classEmployee.loadEmployees(this.userInfo.employee_id, organization_id, this.page, this.itemsPerPage).then(data => { 
+                console.log(data , 'loadEmployeesPerPage')
+                this.employees = data
+                this.totalItems = this.employees.length 
+                this.loading=false
+            })
+            
         },
          async loadNewData( page ){
             await this.evaluateEmployee()
-            this.page = page
+             this.page = page
+            this.loading=true
             let organization_id = this.userInfo.organization_id ? this.userInfo.organization_id : 0
-            let data = await this.classEmployee.loadEmployees(this.userInfo.employee_id  , organization_id , this.page , this.itemsPerPage )
-            console.log(data , 'loadNewData')
-            this.employees = data
+             await this.classEmployee.loadEmployees(this.userInfo.employee_id, organization_id, this.page, this.itemsPerPage).then((data) => {
+                console.log(data , 'loadNewData')
+                 this.employees = data
+                this.loading=false
+          })
+            
         },
         addUpdateEmployee( item={}) {
             this.getObj = JSON.parse(JSON.stringify(item))
