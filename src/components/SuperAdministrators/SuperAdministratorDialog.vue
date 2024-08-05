@@ -25,9 +25,10 @@
                     <v-text-field  prepend-inner-icon="mdi-account" placeholder="Middle Name(optional)" v-model="editedObj.middle_name"></v-text-field>
                     
                    
-                    <v-layout>
                         <v-text-field required prepend-inner-icon="mdi-email" placeholder="Email" :rules="emailRules" v-model="editedObj.email"></v-text-field>
-                       <v-autocomplete :rules="nameRules"  required prepend-inner-icon="mdi-gender-male" placeholder="Gender"  :items="['Male' , 'Female']" v-model="editedObj.gender"></v-autocomplete>
+                    <v-layout>
+                       <v-text-field :rules="nameRules"  required prepend-inner-icon="mdi-counter" placeholder="Age" type="number" min="1" v-model="editedObj.age"></v-text-field>
+                        <v-autocomplete :rules="nameRules"  required prepend-inner-icon="mdi-gender-male" placeholder="Gender"  :items="['Male' , 'Female']" v-model="editedObj.gender"></v-autocomplete>
                     </v-layout>
                      <v-textarea :rules="nameRules"  required prepend-inner-icon="mdi-map-marker" placeholder="Address" v-model="editedObj.address"></v-textarea>
                 </v-form>
