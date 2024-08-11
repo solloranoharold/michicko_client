@@ -728,6 +728,8 @@ export default {
                     if (!this.transactionObj.transaction_id) {
                         await this.generateTransactionID()
                         this.transactionObj.transaction_id = this.transactionID
+                    } else {
+                        this.transactionID = this.transactionObj.transaction_id 
                     }
                      this.transactionObj.updated_by = this.userInfo.employee_id
                         this.transactionObj.organization_id = this.userInfo.organization_id
