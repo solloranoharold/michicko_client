@@ -80,6 +80,7 @@ export default {
             let price = this.selectedProduct.srp
             if (this.selectedProduct.quantity <  less_quantity) {
                 alert('Not Enough Quantity')
+                this.valid = false
                 return false 
             }
             if (less_quantity > 0) this.selectedProduct.product_total_amount =  parseFloat(price * less_quantity).toFixed(2)
