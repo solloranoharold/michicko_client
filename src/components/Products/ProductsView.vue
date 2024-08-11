@@ -38,7 +38,7 @@
                     <td> {{ item.product_name }} </td>
                      <td> 
                        <v-chip small text-color="white" color="indigo">
-                         ₱{{ parseFloat(item.srp).toFixed(2) }}
+                         ₱{{ parseFloat(item.price).toFixed(2) }}
                        </v-chip>
                     </td>
                      <td> 
