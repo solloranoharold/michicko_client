@@ -233,7 +233,7 @@
                                <tbody>
                                 <tr style="border:1px solid;" v-for="(item , i) in tableOTCProducts" :key="i" @click="getTableItem(item)">
                                     <td>{{ item.product_name }}</td>
-                                    <td>₱{{ parseFloat(item.price).toFixed(2) }}</td>
+                                    <td>₱{{ parseFloat(item.srp).toFixed(2) }}</td>
                                     <td>{{ item.less_quantity }}</td>
                                     <td>₱{{ parseFloat(item.product_total_amount).toFixed(2) }}</td>
                                     <td><v-icon @click="deleteOTC(item)" color="red">mdi-delete</v-icon></td>
