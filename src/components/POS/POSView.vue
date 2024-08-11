@@ -69,12 +69,12 @@
                             <v-radio
                                 label="Cash"
                                 value="cash"
+                                @click="changeTipValue()"
                                 
                             ></v-radio>
                             <v-radio
                                 label="Cashless"
                                 value="cashless"
-                                @click="changeTipValue()"
                             ></v-radio>
                         </v-radio-group>
                         <div v-if="transactionObj.payment_method=='cashless'">
@@ -200,7 +200,7 @@
                                         <td> {{  item.fullname }}</td>
                                         <td> {{ item.commissions }}%</td>
                                         <td>₱{{ item.commission_total_amount }}</td>
-                                        <td style="width: 120px;" ><v-text-field :disabled="transactionObj.payment_method == 'cashless'"  clearable type="number" min="1"  @input="parseServicesValue(item)" v-model="item.tip"></v-text-field></td>
+                                        <td style="width: 120px;" ><v-text-field :disabled="transactionObj.payment_method == 'cashless'"  type="number" min="1"  @input="parseServicesValue(item)" v-model="item.tip"></v-text-field></td>
                                     </tr>
                                 </tbody>
                             </v-simple-table>

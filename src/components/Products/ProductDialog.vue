@@ -30,7 +30,12 @@
                         <v-text-field label="Quantity" :readonly="editedObj.method == 1 " :rules="nameRules" type="number" :min="1" required prepend-inner-icon="mdi-plus-box" placeholder="Quantity" v-model="editedObj.quantity"></v-text-field> 
                         
                     </v-layout>
-                    <v-text-field label="Add Quantity" v-if="editedObj.method == 1 " :rules="editedObj.method == 1 ?nameRules:''" type="number" :min="1" required prepend-inner-icon="mdi-plus-box" placeholder="Quantity" v-model="historyObj.added_quantity"></v-text-field> 
+                      <v-switch
+                        v-model="stocks"
+                        flat
+                        :label="`Add Stocks`"
+                    ></v-switch>
+                    <v-text-field label="Add Quantity" v-if="editedObj.method == 1 && stocks " :rules="editedObj.method == 1 && stocks ?nameRules:''" type="number" :min="1" required prepend-inner-icon="mdi-plus-box" placeholder="Quantity" v-model="historyObj.added_quantity"></v-text-field> 
                     <v-card-actions class="justify-end">
                         <v-btn :disabled="!valid"
                         class="textTitle" rounded dark color="#BCAAA4"
@@ -109,7 +114,7 @@ export default {
                 this.editedObj.updated_by = this.userInfo.employee_id
                  this.loading=true 
                 await this.classInventory.addUpdateProduct(this.editedObj).then(async() => {
-                    if (this.historyObj.added_quantity) await this.classInventory.productHistoryCreate(this.historyObj)
+                    if (this.historyObj.added_quantity && this.stocks) await this.classInventory.productHistoryCreate(this.historyObj)
 
                     this.close()
                      this.loading=false 
@@ -122,6 +127,7 @@ export default {
         }
    },
     data: () => ({
+        stocks:false,
         classInventory: new Inventory(),
         classOrg: new Organizations(),
         editedObj: {},
