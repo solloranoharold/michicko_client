@@ -728,7 +728,8 @@ export default {
                     if (!this.transactionObj.transaction_id) {
                         await this.generateTransactionID()
                         this.transactionObj.transaction_id = this.transactionID
-                        this.transactionObj.updated_by = this.userInfo.employee_id
+                    }
+                     this.transactionObj.updated_by = this.userInfo.employee_id
                         this.transactionObj.organization_id = this.userInfo.organization_id
                         let commission_services = 0
                         let commission_otc= 0
@@ -767,7 +768,6 @@ export default {
                             item.updated_by = this.userInfo.employee_id
                             item.total_commissions	 = commission_otc
                         })
-                    }
                      console.log(this.transactionObj)
                     
                    
