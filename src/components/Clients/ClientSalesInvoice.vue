@@ -2,7 +2,7 @@
       <v-dialog 
         persistent
         transition="dialog-top-transition"
-        max-width="900"
+        max-width="600"
         v-model="value"
       >
         <v-card>
@@ -28,14 +28,14 @@
                         <strong>To</strong>: {{ saveDataObj.last_name }} {{ saveDataObj.first_name  }}<br/>
                         Contact # : {{ saveDataObj.contact_no }}<br/>
                         Email : {{ saveDataObj.email ? saveDataObj.email : 'no email' }}<br/>
-                        Address : {{ saveDataObj.address ? saveDataObj.address : 'no address' }}
                     </v-card-subtitle>
                 </v-col>
                 <v-col>
                     <v-card-subtitle>
                         <strong>Date</strong>: {{ invoice.date_created }} <br/>
                         <strong>Invoice #</strong>: {{ invoice.transaction_id }}<br/>
-                       <strong>Customer ID</strong>: {{ saveDataObj.client_id}}
+                       <strong>Customer ID</strong>: {{ saveDataObj.client_id}} <br/>
+                       <strong>Transaction Details</strong>:  {{  getTotalPayments.transaction_details }}
                     </v-card-subtitle>
                 </v-col>
               </v-row>
@@ -89,6 +89,12 @@ export default {
             type: Object ,
             required:true
         }
+    },
+     async created() {
+        if ((this.userInfo.position_id == 0 || this.userInfo.position_id == 1) && !this.$route.params.organization_id) {
+            this.$router.push('/organization')
+            return
+        }  
     },
     computed: {
        

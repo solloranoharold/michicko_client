@@ -38,7 +38,7 @@
                     <v-text-field label="Add Stocks"  v-if="editedObj.method == 1 && stocks" :rules="editedObj.method == 1 && stocks? nameRules : ''" type="number" :min="1" required prepend-inner-icon="mdi-plus-box" placeholder="Quantity (piece)" v-model="historyObj.added_quantity"></v-text-field> 
                     
                     <v-card-actions class="justify-end">
-                        <v-btn :disabled="!valid"
+                        <v-btn
                         class="textTitle" rounded dark color="#BCAAA4"
                         @click="addUpdateProduct()"
                     ><v-icon>mdi-bottle-soda-classic-outline</v-icon>{{ editedObj.method== 0 ? 'Add':"Update" }} Product</v-btn>
@@ -129,6 +129,12 @@ export default {
             this.historyObj={}
             this.$emit('closeDialog' , false )
         }
+    },
+    async created() {
+        if ((this.userInfo.position_id == 0 || this.userInfo.position_id == 1) && !this.$route.params.organization_id) {
+            this.$router.push('/organization')
+            return
+        }  
    },
     data: () => ({
         stocks:false,

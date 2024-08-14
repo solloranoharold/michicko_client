@@ -22,7 +22,10 @@
                                     <td>{{getClientName(item)}}</td>
                                     <td>{{ item.data.tableServices.length }}</td>
                                     <td>{{ item.date_saved }}</td>
-                                    <td> <v-btn @click="selectDraft(item)">select</v-btn></td>
+                                    <td> 
+                                        <v-btn x-small dark color="success" rounded @click="selectDraft(item)"><v-icon>mdi-select</v-icon> Select</v-btn>
+                                        <v-btn x-small dark color="red" rounded @click="deleteDraft(item)"><v-icon>mdi-delete</v-icon>Delete</v-btn>
+                                    </td>
                                 </tr>
                             </tbody>
                         </v-simple-table>
@@ -197,10 +200,10 @@
                                 </thead>
                                 <tbody >
                                     <tr style="border:1px solid;" v-for="(item , i ) in JSON.parse(JSON.stringify(serviceCommissions))" :key="i+'a'">
-                                        <td> {{  item.fullname }}</td>
+                                        <td> {{item.fullname }}</td>
                                         <td> {{ item.commissions }}%</td>
                                         <td>₱{{ item.commission_total_amount }}</td>
-                                        <td style="width: 120px;" ><v-text-field :disabled="transactionObj.payment_method == 'cashless'"  type="number" min="1"  @input="parseServicesValue(item)" v-model="item.tip"></v-text-field></td>
+                                        <td style="width: 120px;" ><v-text-field :disabled="transactionObj.payment_method == 'cash'"  type="number" min="1"  @input="parseServicesValue(item)" v-model="item.tip"></v-text-field></td>
                                     </tr>
                                 </tbody>
                             </v-simple-table>
@@ -249,16 +252,14 @@
                                         <th  style="color:white">Stylist</th>
                                         <th  style="color:white">Commission</th>
                                         <th  style="color:white">Total Amount</th>
-                                        <th  style="color:white">Tip</th> 
                                     </tr>
                                 </thead>
                                 <tbody >
                                     <tr style="border:1px solid;" v-for="(item , i ) in JSON.parse(JSON.stringify(OTCCommissions))" :key="i+'b'">
-                                        <td> {{  item.fullname }}</td>
+                                       <td> {{  item.fullname }}</td>
                                         <td> {{ item.commissions }}%</td>
                                         <td>₱{{ item.commission_total_amount }}</td>
-                                        <td style="width: 120px;" ><v-text-field :disabled="transactionObj.payment_method=='cashless'" clearable type="number" min="1"  @input="parseOTCValue( item )" v-model="item.tip"></v-text-field></td>
-                                    </tr>
+                                     </tr>
                                 </tbody>
                             </v-simple-table>
                 </v-col>
@@ -287,6 +288,8 @@ import Swal from 'sweetalert2'
 // decreasing qty 
 import { io } from "socket.io-client";
 
+
+import moment from 'moment'
 export default {
     components:{LoaderView , OTCProductsDialogVue},
     data: () => ({
@@ -523,9 +526,20 @@ export default {
                 alert(`${this.serviceProductObj.product_name} quantity is not enough`)
                 return false 
             }
+            let qty = this.serviceProductObj.less_quantity
+
             let i = this.tableServicesProduct.findIndex(x=> x.inventory_id == this.serviceProductObj.inventory_id)
-            if (i < 0) this.tableServicesProduct.push(this.serviceProductObj)
-            this.serviceProductObj={}
+            if (i < 0) this.tableServicesProduct.push(JSON.parse(JSON.stringify(this.serviceProductObj)))
+            else {
+                let new_qty = parseInt(this.tableServicesProduct[i].less_quantity) + parseInt( qty) 
+                 if (new_qty > this.serviceProductObj.total_value) {
+                    alert(`${this.serviceProductObj.product_name} quantity is not enough`)
+                    return false 
+                }
+               this.tableServicesProduct[i].less_quantity = new_qty
+            }
+            this.serviceProductObj.less_quantity=0
+            this.serviceProductObj=JSON.parse(JSON.stringify({}))
         },
         addOTCProduct() {
             this.otcDialog = !this.otcDialog
@@ -547,18 +561,18 @@ export default {
             let organization_id = this.$route?.params?.organization_id ? this.$route.params.organization_id : this.userInfo.organization_id
             await this.classEmployee.loadEmployeesOption(organization_id).then((data) => {
                 this.employeesService = JSON.parse(JSON.stringify(data.filter(item => { 
-                    item.fullname = `${item.last_name} ${item.first_name} ${item.middle_name ? item.middle_name : ""} (${item.position})`
+                    item.fullname = item.nickname ? item.nickname : `${item.last_name} ${item.first_name} ${item.middle_name ? item.middle_name : ""} (${item.position})`
                     item.commission_total_amount = 0
                     item.commission_type = 'service'
                     item.tip=0
-                    return item.position !='Manager'
+                    return item.position !='Manager' && item.status == 1 
                 })))
                 this.employeesOTC = JSON.parse(JSON.stringify(data.filter(item => { 
-                    item.fullname = `${item.last_name} ${item.first_name} ${item.middle_name ? item.middle_name : ""} (${item.position})`
+                    item.fullname = item.nickname ? item.nickname :`${item.last_name} ${item.first_name} ${item.middle_name ? item.middle_name : ""} (${item.position})`
                     item.commission_total_amount = 0
                     item.commission_type = 'otc'
                     item.tip=0
-                    return item.position !='Manager'
+                    return item.position !='Manager' && item.status == 1 
                 })))
                 //  console.log(this.employees , 'loadAllEmployees')
                 this.loading = false 
@@ -604,6 +618,31 @@ export default {
             let i = this.clients.findIndex(x => x.client_id == item.data.transactionObj.client_id)
             if(i>-1 ) return this.clients[i].fullname
         },
+        async deleteDraft( item ) {
+            Swal.fire({
+                title: `Are you want to delete this transaction in draft?`,
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#90CAF9",
+                cancelButtonColor: "white",
+                confirmButtonText: `Yes, delete it!`,
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    let i = this.posDraftTransactions.findIndex(x => x.transaction_id == item.transaction_id)
+                    if (i > -1) this.posDraftTransactions.splice(i, 1)
+                    await Swal.fire({
+                            icon: "success",
+                            title: "Transaction has been deleted!",
+                            timer:3000,
+                            toast: true, 
+                            position:'bottom-end',
+                            showConfirmButton:false , 
+                            
+                        });
+                 }
+
+            })
+        },
         async saveAsDraft() {
              this.transactionObj.total_commissions_otc = 0
              this.transactionObj.total_commissions_service=0
@@ -628,40 +667,44 @@ export default {
                         let item = this.tableOTCProductCommissions[x]
                         console.log(item , 'tableOTCProductCommissions')
                         item.transaction_id = this.transactionID
-                        if (item.tip) this.transactionObj.total_commissions_otc += Number(item.tip)
+                        // if (item.tip) this.transactionObj.total_commissions_otc += Number(item.tip)
                         this.transactionObj.total_commissions_otc+= Number(item.commission_total_amount) 
                         commission_otc = Number(commission_otc) + Number(item.commissions)
-                    }
+                         item.date_created = moment().format('YYYY-MM-DD HH:mm:ss')
+                     }
                     
                     this.tableServiceCommissions.forEach(item => {
                         item.transaction_id = this.transactionID
-                         if (item.tip) this.transactionObj.total_commissions_service += Number(item.tip) 
+                        //  if (item.tip) this.transactionObj.total_commissions_service += Number(item.tip) 
                         this.transactionObj.total_commissions_service+= Number(item.commission_total_amount)
                         commission_services = Number(commission_services) + Number(item.commissions)
+                         item.date_created = moment().format('YYYY-MM-DD HH:mm:ss')
                     })
                     this.tableServices.forEach(item => {
                         item.transaction_id = this.transactionID
                         item.client_id = this.transactionObj.client_id
                         item.total_commissions = commission_services
+                         item.created_date = moment().format('YYYY-MM-DD HH:mm:ss')
                     })
                     this.transactionObj.no_of_service = this.tableServices.length
                     this.tableServicesProduct.forEach(item => {
                         item.transaction_id = this.transactionID
                         item.client_id = this.transactionObj.client_id
                         item.updated_by = this.userInfo.employee_id
-                       
+                        item.date_created = moment().format('YYYY-MM-DD HH:mm:ss')
                     })
                     this.tableOTCProducts.forEach(item => {
                         item.transaction_id = this.transactionID
                         item.client_id = this.transactionObj.client_id
                         item.updated_by = this.userInfo.employee_id
-                         item.total_commissions	 = commission_otc
+                        item.total_commissions = commission_otc
+                          item.date_created = moment().format('YYYY-MM-DD HH:mm:ss')
                     })
                     console.log(this.transactionObj.total_commissions_otc , 'otc commissions')
                     console.log(this.transactionObj.total_commissions_service , 'services commissions')
                     let obj = { 
                         transaction_id: this.transactionObj.transaction_id,
-                        date_saved: new Date(), 
+                        date_saved: moment().format('YYYY-MM-DD HH:mm:ss A'), 
                         data: { 
                             transactionObj: this.transactionObj,
                             tableOTCProductCommissions: this.tableOTCProductCommissions, 
@@ -678,15 +721,16 @@ export default {
                         this.posDraftTransactions.push(obj)
                     }
                     this.$store.commit('DRAFT_TRANSACTIONS', this.posDraftTransactions)
-                      await Swal.fire({
-                        icon: "success",
-                        title: "Transaction has been saved as draft!",
-                        timer:3000,
-                        toast: true, 
-                        position:'bottom-end',
-                        showConfirmButton:false , 
-                        
-                       });
+                        await Swal.fire({
+                            icon: "success",
+                            title: "Transaction has been saved as draft!",
+                            timer:3000,
+                            toast: true, 
+                            position:'bottom-end',
+                            showConfirmButton:false , 
+                            
+                        });
+                       await this.loadAllClass()   
                 }
             })
         },
@@ -741,34 +785,38 @@ export default {
                             let item = this.tableOTCProductCommissions[x]
                             console.log(item , 'tableOTCProductCommissions')
                             item.transaction_id = this.transactionID
-                            if (item.tip) this.transactionObj.total_commissions_otc += Number(item.tip)
+                            // if (item.tip) this.transactionObj.total_commissions_otc += Number(item.tip) di kasama sa dashboard
                             this.transactionObj.total_commissions_otc+= Number(item.commission_total_amount) 
                             commission_otc = Number(commission_otc) + Number(item.commissions)
+                            item.date_created = moment().format('YYYY-MM-DD HH:mm:ss')
                         }
                         
                         this.tableServiceCommissions.forEach(item => {
                             item.transaction_id = this.transactionID
-                            if (item.tip) this.transactionObj.total_commissions_service += Number(item.tip) 
+                            // if (item.tip) this.transactionObj.total_commissions_service += Number(item.tip)  di kasama sa dashboard
                             this.transactionObj.total_commissions_service+= Number(item.commission_total_amount)
                             commission_services = Number(commission_services) + Number(item.commissions)
+                             item.date_created = moment().format('YYYY-MM-DD HH:mm:ss')
                         })
                         this.tableServices.forEach(item => {
                             item.transaction_id = this.transactionID
                             item.client_id = this.transactionObj.client_id
                             item.total_commissions = commission_services
+                             item.created_date = moment().format('YYYY-MM-DD HH:mm:ss')
                         })
                         this.transactionObj.no_of_service = this.tableServices.length
                         this.tableServicesProduct.forEach(item => {
                             item.transaction_id = this.transactionID
                             item.client_id = this.transactionObj.client_id
                             item.updated_by = this.userInfo.employee_id
-                        
+                            item.date_created = moment().format('YYYY-MM-DD HH:mm:ss')
                         })
                         this.tableOTCProducts.forEach(item => {
                             item.transaction_id = this.transactionID
                             item.client_id = this.transactionObj.client_id
                             item.updated_by = this.userInfo.employee_id
-                            item.total_commissions	 = commission_otc
+                            item.total_commissions = commission_otc
+                            item.date_created = moment().format('YYYY-MM-DD HH:mm:ss')
                         })
                      console.log(this.transactionObj)
                     
@@ -781,19 +829,13 @@ export default {
                          console.log(this.transactionObj.total_commissions_service , 'services commissions')
                         // INSERTING TRANSACTIONS DATA 
                     
-                      await this.createTransaction().then(async () => { 
-                        await this.createTransactionServices().then(async () => {
-                                // LESS QUANTITY FOR SERVICE / OTC PRODUCTS
+                        await this.createTransaction().then(async () => { 
+                            await this.createTransactionServices()
                             await this.evaluateAffectedServicesProduct()
-                        })
-                        await this.createTransactionsOTCProducts().then(async () => { 
-                                // LESS QUANTITY FOR SERVICE / OTC PRODUCTS
-                            await this.evaluateAffectedOTCProduct()
-                        })
-                        await this.createTransactionsServicesCommissions()
-                        await this.createTransactionsOTCCommissions()
-                        // LESS QUANTITY FOR SERVICE / OTC PRODUCTS
-                        await this.loadAllClass()   
+                            await this.createTransactionsOTCProducts()
+                            await this.createTransactionsServicesCommissions()
+                            await this.createTransactionsOTCCommissions()
+                            await this.loadAllClass()   
                        })
                       
                   
@@ -811,13 +853,15 @@ export default {
                     //   window.location.reload()
                      
                    } catch (error) {
-                    Swal.fire({
-                        position: "bottom-end",
-                        icon: "error",
-                        title: error.message,
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
+                    // Swal.fire({
+                    //     position: "bottom-end",
+                    //     icon: "error",
+                    //     title: error.message,
+                    //     showConfirmButton: false,
+                    //     timer: 1500
+                        // });
+                    console.log(error.message)
+                    await Promise.resolve(this.submitPOSData())
                    }
 
                     
@@ -827,10 +871,14 @@ export default {
 
         async createTransaction() {
             this.loading = true
-           return await this.classTransaction.createTransaction(this.transactionObj).then(() => { 
-                this.loadingText = 'INSERTING TRANSACTION DATA'
-                this.loading = false 
-           })
+            try {
+                 return await this.classTransaction.createTransaction(this.transactionObj).then(() => { 
+                        this.loadingText = 'INSERTING TRANSACTION DATA'
+                        this.loading = false 
+                })
+            } catch (error) {
+               return await Promise.resolve(this.createTransaction())
+            }
         },
         async createTransactionServices() {
             this.loading=true

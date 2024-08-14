@@ -16,7 +16,7 @@
                 <v-toolbar flat dense>
                     
                     <v-flex md3>
-                        <v-text-field class="textTitle" v-model="search" color="#BCAAA4" clearable dense label="Search" append-icon="mdi-magnify" @click:append="searchOrganization"></v-text-field>
+                        <v-text-field class="textTitle" v-model="search" color="#BCAAA4" clearable dense label="Search" append-icon="mdi-magnify" @click:append="searchOrganization" @keyup.enter="searchOrganization"></v-text-field>
                     </v-flex>
                     <v-spacer/>
                     <label style="font-size: 11px;">Legends :  <v-chip x-small color="#B0BEC5" text-color="white" > Not Active </v-chip><v-chip x-small color="black" outlined text-color="black"> Active </v-chip></label>
@@ -132,10 +132,12 @@ export default {
             { text: 'Accounts', icon: 'mdi-book-cog-outline', name: 'accounts' },
             { text: 'Services', icon: 'mdi-content-cut', name: 'services' },
             { text: 'Clients', icon: ' mdi-monitor-account', name: 'clients' },
-            { text: "Cashless Methods", name: 'cashless', 'icon': "mdi-credit-card-marker" }
+           { text: "Cashless Methods", name: 'cashless', 'icon': "mdi-credit-card-marker" },
+             { text: "Reports", name: 'reports', 'icon': "mdi-account-multiple" },
+            
         ],
         group_Modules: [ 
-            { text: 'Services', icon: 'mdi-bottle-soda-classic-outline', name: 'inventory' },
+            { text: 'Service Products', icon: 'mdi-bottle-soda-classic-outline', name: 'inventory' },
             { text:'OTC Products ', icon: 'mdi-bottle-soda-classic-outline', name: 'products' },
         ]
     }),

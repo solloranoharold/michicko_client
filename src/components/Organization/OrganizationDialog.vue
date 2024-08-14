@@ -27,7 +27,7 @@
                      
                    </v-form>
                     <v-card-actions class="justify-end">
-                        <v-btn :disabled="!valid" rounded dark color="#BCAAA4"
+                        <v-btn  rounded dark color="#BCAAA4"
                         @click="addUpdateOrganization()"
                     ><v-icon>mdi-domain</v-icon>{{ editedObj.method== 0 ? 'Add':"Update" }} Organization</v-btn>
                     

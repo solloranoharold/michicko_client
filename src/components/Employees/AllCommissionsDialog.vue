@@ -1,5 +1,5 @@
 <template>
-     <v-dialog 
+    <v-dialog 
         persistent
         transition="dialog-top-transition"
         max-width="1000"
@@ -7,18 +7,14 @@
       >
         <v-card class="textTitle">
             <v-toolbar dark flat dense class="toolbarTitle" color="#BCAAA4">
-                <v-toolbar-title><v-icon>mdi-currency-php</v-icon> Commissions </v-toolbar-title>
+                <v-toolbar-title><v-icon>mdi-currency-php</v-icon> Total Employee Commissions </v-toolbar-title>
                 <v-spacer/>
                 <v-icon  @click="close()">mdi-close</v-icon>
             </v-toolbar>
-            <v-card-title> {{ commissionDataObj.last_name }} {{ commissionDataObj.first_name}}</v-card-title>
-            <v-card-subtitle>{{  commissionDataObj.position }}</v-card-subtitle>
-            <!-- {{commissionDataObj}} -->
             <v-card-text>
-                <v-divider style="border:1px solid;"/>
                 <br/>
                 <v-row no-gutters>
-                    <v-col cols="12" md="3" lg="3">
+                    <v-col cols="12" md="4" lg="4">
                         <v-menu
                             ref="menu"
                             v-model="menu"
@@ -46,7 +42,7 @@
                             ></v-date-picker>
                         </v-menu>
                     </v-col>
-                    <v-col cols="12" md="3" lg="3">
+                    <v-col cols="12" md="4" lg="4">
                          <v-menu
                             ref="menu1"
                             v-model="menu1"
@@ -74,82 +70,73 @@
                             ></v-date-picker>
                         </v-menu>
                     </v-col>
-                    <v-col cols="12" md="3" lg="3">
-                         <v-btn @click="getCommissions()" color="#BCAAA4" dark  block><v-icon>mdi-magnify</v-icon>Search</v-btn>
+                    <v-col cols="12" md="4" lg="4">
+                         <v-btn @click="loadAllEmployeesCommission()" color="#BCAAA4" dark  block><v-icon>mdi-magnify</v-icon>Search</v-btn>
                     </v-col>
                 </v-row>
-               
-                <v-toolbar flat dense>
-                   
-                <v-spacer/>
-                Total Commission + Tip :  <strong style="font-size: 20px;">₱{{ totalCommissions}}</strong>
-                </v-toolbar>
-                <v-data-table :headers="headers" :items="commissions" v-if="!loading">
-                    <template v-slot:[`item.commission_total_amount`]="{item}">
-                       <v-chip small color="green" text-color="white">₱{{  parseFloat(item.commission_total_amount).toFixed(2) }}</v-chip>
-                    </template>
-                </v-data-table>
-                <LoaderView :loadingText="loadingText" v-else/>
+                 <v-data-table v-if="!loading" dense :search="search" :headers="headers" :items="commissions">
+                        <template v-slot:top>
+                            <v-flex md6 lg6>
+                                <v-text-field clearable v-model="search"  label="Search Employee" placeholder="Search Employee" prepend-inner-icon="mdi-magnify"></v-text-field>
+                            </v-flex>
+                        </template>
+                        <template v-slot:[`item.total_commission`]="{item}">
+                             ₱{{  parseFloat(item.total_commission).toFixed(2) }}
+
+                        </template>
+                         <template v-slot:[`item.total_tip`]="{item}">
+                             ₱{{  parseFloat(item.total_tip).toFixed(2) }}
+                        </template>
+                         <template v-slot:[`item.total_amount`]="{item}">
+                            <v-chip small color="green" text-color="white">
+                             ₱{{  parseFloat(item.total_amount).toFixed(2) }}
+                             </v-chip>
+                        </template>
+                    </v-data-table>
+                    <LoaderView :loading-text="loadingText" v-else/>
             </v-card-text>
         </v-card>
+      
       </v-dialog>
 </template>
+
 <script>
 import Swal from 'sweetalert2'
 import LoaderView from '@/views/LoaderView.vue';
 import Transactions from '@/class/transactions';
 export default {
     components:{LoaderView},
-    props: {
+     props: {
        dialog:{
             type: Boolean,
             required: true 
         },
-        commissionDataObj:{
-            type: Object ,
-            required:true
-        }
     },
-    data: () => ({
-        classTransaction: new Transactions(),
+    computed: {
+          value() {
+            return this.dialog
+        },
+    },
+     data: () => ({
+         classTransaction: new Transactions(),
+        search:"",
         menu: false, menu1: false,
         loadingText: "", loading: false,
-        commissions:[],
         date1: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
         date2: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
         headers: [
-            { text: "Transaction ID", value: 'transaction_id' },
-            { text: "Commission_Total", value: "commission_total_amount" },
-            { text: 'Commission Type', value: 'commission_type' },
-            { text:"Tip", value:'tip'},
-            { text:"Date" , value:"date_created"}
-        ]
+            { text: 'Date Range', value: 'date_range' },
+            { text: "Name", value: "fullname" },
+            {text: "Position", value: "position" },
+            {text:"Total Tip" , value:'total_tip'},
+            { text: 'Total Commission', value: 'total_commission' },
+            { text: 'Total Amount', value: 'total_amount' },
+            
+         ],
+        commissions:[]
     }),
-    async created() {
-        if ((this.userInfo.position_id == 0 || this.userInfo.position_id == 1) && !this.$route.params.organization_id) {
-        this.$router.push('/organization')
-        return
-    }  
-    },
-    computed: { 
-        value() {
-            return this.dialog
-        },
-        totalCommissions() {
-            let total = 0 
-            this.commissions.forEach(item => { 
-                total +=  parseFloat(item.commission_total_amount).toFixed(2) + parseFloat(item.tip).toFixed(2)
-            })
-            return parseFloat(total).toFixed(2) 
-        }
-    },
-    watch: {
-        value(val) {
-            if(val) this.commissions=[]
-        }
-    },
-    methods: { 
-        async getCommissions() {
+    methods: {
+        async loadAllEmployeesCommission() {
             if (this.date1 > this.date2) {
                  Swal.fire({
                         toast: true,
@@ -161,11 +148,18 @@ export default {
                 })
                 return false
             }  
-            this.loading=true
-            await this.classTransaction.loadCommissions(this.commissionDataObj.organization_id,this.commissionDataObj.employee_id, this.date1, this.date2).then((data) => {
+            this.loading = true
+            let organization_id = this.userInfo.organization_id ? this.userInfo.organization_id : 0
+            await this.classTransaction.loadAllEmployeesCommission(organization_id, this.date1, this.date2).then((data) => {
                 this.loadingText = "EMPLOYEE COMMISSIONS"
-                this.commissions = data 
+                this.commissions = data.filter(rec => { 
+                    rec.date_range =  `${this.date1} - ${this.date2}`
+                    rec.total_amount = parseFloat(rec.total_commission).toFixed(2) + parseFloat(rec.total_tip).toFixed(2)
+
+                    return rec
+                }) 
                 this.loading = false 
+                console.log(this.commissions , 'loadAllEmployeesCommission')
                 if (!data.length) {
                     Swal.fire({
                         toast: true,
@@ -177,6 +171,7 @@ export default {
                     })
                 }
            })
+
         },
         close() {
             this.$emit('closeCommissionDialog' , false )

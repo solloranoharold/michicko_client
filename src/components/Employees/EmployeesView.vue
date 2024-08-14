@@ -10,6 +10,8 @@
             <v-flex md3> 
                 <v-text-field color="#BCAAA4" prepend-inner-icon="mdi-magnify" placeholder="Search"></v-text-field>
             </v-flex>
+            <v-spacer/>
+            <v-btn class="textTitle" small @click="openAllCommission()" rounded dark color="#BCAAA4"><v-icon>mdi-cash-multiple</v-icon> Employees Commission</v-btn>
         </v-toolbar>
          <v-card style="height: 700px;"  v-if="!loading">
         <v-simple-table dense class="textTitle">
@@ -22,7 +24,7 @@
                 <v-toolbar flat dense>
                     
                     <v-flex md3>
-                        <v-text-field v-model="search" color="#BCAAA4" clearable dense label="Search" append-icon="mdi-magnify" @click:append="searchEmployee"></v-text-field>
+                        <v-text-field v-model="search" color="#BCAAA4" clearable dense label="Search" append-icon="mdi-magnify" @click:append="searchEmployee" @keyup.enter="searchEmployee"></v-text-field>
                     </v-flex>
                 </v-toolbar>
             </template>
@@ -105,6 +107,7 @@
         <LoaderView v-else/>
         <employee-dialog-view-vue :dialog="dialog" :saveDataObj="getObj" @closeDialog="closeDialog" />
         <commissions-dialog-vue :dialog="comDialog" :commissionDataObj="getObj" @closeCommissionDialog = "closeCommissionDialog"/>
+        <AllCommissionsDialog :dialog="allComDialog"  @closeCommissionDialog = "closeCommissionDialog"/>
     </v-container>
 </template>
 <script>
@@ -112,12 +115,14 @@ import EmployeeDialogViewVue from './EmployeeDialogView.vue'
 import Employees from '../../class/employees'
 import LoaderView from '@/views/LoaderView.vue';
 import CommissionsDialogVue from './CommissionsDialog.vue';
+import AllCommissionsDialog from './AllCommissionsDialog.vue';
 export default {
-    components: { EmployeeDialogViewVue, LoaderView , CommissionsDialogVue},
+    components: { EmployeeDialogViewVue, LoaderView , CommissionsDialogVue , AllCommissionsDialog},
    data:()=>({
     classEmployee : new Employees(),
        dialog: false,
-    comDialog:false , 
+       comDialog: false, 
+    allComDialog:false ,
     totalCountEmployees: 0 ,
     itemsPerPage: 20 ,  
     // totalPages: 0 , 
@@ -187,26 +192,38 @@ export default {
             await this.getTotalEmployeeCount()
             await this.loadEmployeesPerPage()
         },
-       async getTotalEmployeeCount() {
+        async getTotalEmployeeCount() {
+        this.loading = true 
         let organization_id =this.$route?.params?.organization_id  ?this.$route.params.organization_id: this.userInfo.organization_id
-         let a =  await this.classEmployee.getEmployeesTotalCount( this.userInfo.employee_id , organization_id , this.search )
-         this.totalCountEmployees = a.TOTAL 
-        console.log( this.totalCountEmployees, ' this.totalCountEmployees')
+            await this.classEmployee.getEmployeesTotalCount(this.userInfo.employee_id, organization_id, this.search).then(a => { 
+                this.totalCountEmployees = a.TOTAL 
+                console.log(this.totalCountEmployees, ' this.totalCountEmployees')
+             this.loading=false
+         })
+        
+        
         },
-       async loadEmployeesPerPage() {
+        async loadEmployeesPerPage() {
+        this.loading=true
         let organization_id =this.$route?.params?.organization_id ?this.$route.params.organization_id: this.userInfo.organization_id
-            let data = await this.classEmployee.loadEmployees(this.userInfo.employee_id  , organization_id , this.page , this.itemsPerPage )
+        await this.classEmployee.loadEmployees(this.userInfo.employee_id  , organization_id , this.page , this.itemsPerPage ).then(data => { 
             console.log(data , 'loadEmployeesPerPage')
-           this.employees = data
+            this.employees = data
             this.totalItems = this.employees.length 
+            this.loading=false 
+        })    
         },
-        async loadNewData( page ){
+        async loadNewData(page) {
             await this.evaluateEmployee()
             this.page = page
-             let organization_id =this.$route?.params?.organization_id ?this.$route.params.organization_id: this.userInfo.organization_id
-            let data = await this.classEmployee.loadEmployees(this.userInfo.employee_id  , organization_id , this.page , this.itemsPerPage )
-            console.log(data , 'loadNewData')
-            this.employees = data
+            let organization_id =this.$route?.params?.organization_id ?this.$route.params.organization_id: this.userInfo.organization_id
+            this.loading=true
+            await this.classEmployee.loadEmployees(this.userInfo.employee_id, organization_id, this.page, this.itemsPerPage).then(data => { 
+                console.log(data, 'loadNewData')
+                this.employees = data
+                this.loading=false 
+            })
+            
         },
 
         addUpdateEmployee(obj={}){
@@ -221,9 +238,13 @@ export default {
        openCommissionDialog( item ) {
            this.getObj = JSON.parse(JSON.stringify(item))
             this.comDialog = !this.comDialog
-       },
+        },
+        openAllCommission() {
+             this.allComDialog = !this.allComDialog 
+        },
        closeCommissionDialog(val) {
-            this.comDialog = val 
+           this.comDialog = val 
+           this.allComDialog = val 
         }
    }
 

@@ -16,7 +16,7 @@
                 <v-toolbar flat dense>
                     
                     <v-flex md3>
-                        <v-text-field class="textTitle" v-model="search" color="#BCAAA4" clearable dense label="Search" append-icon="mdi-magnify" @click:append="searchServices"></v-text-field>
+                        <v-text-field class="textTitle" v-model="search" color="#BCAAA4" clearable dense label="Search" append-icon="mdi-magnify" @click:append="searchServices" @keyup.enter="searchServices"></v-text-field>
                     </v-flex>
                     <v-spacer/>
                     <label style="font-size: 11px;">Legends :  <v-chip x-small color="#B0BEC5" text-color="white" > Not Active </v-chip><v-chip x-small color="black" outlined text-color="black"> Active </v-chip></label>

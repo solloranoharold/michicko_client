@@ -24,8 +24,8 @@
                 <v-autocomplete  v-model="selectedProduct" return-object  color="#BCAAA4"  item-text="product_name" append-icon="mdi-package" :items="products" label="OTC Product" dense outlined  :rules="nameRules"></v-autocomplete>
                 <label>Remaining Quantity : x{{ selectedProduct?.quantity ? selectedProduct.quantity: 0  }}</label>
                 <v-text-field color="#BCAAA4" :rules="nameRules" outlined type="number" @input="getTotalAmount()" :min="1" required prepend-inner-icon="mdi-plus-box" placeholder="Quantity" v-model="selectedProduct.less_quantity" dense></v-text-field> 
-                <v-text-field color="#BCAAA4" :rules="nameRules" outlined type="number"   :min="1" required prepend-inner-icon="mdi-plus-box" placeholder="Price" label="Price" v-model="selectedProduct.srp" dense readonly filled></v-text-field> 
-                <v-text-field color="#BCAAA4" :rules="nameRules" outlined type="number" :min="1" required prepend-inner-icon="mdi-plus-box" placeholder="Total Amount" label="Total Amount" v-model="selectedProduct.product_total_amount" dense readonly filled></v-text-field> 
+                <v-text-field color="#BCAAA4" :rules="nameRules" outlined type="number"   :min="1" required prepend-inner-icon="mdi-currency-php" placeholder="Price" label="Price" v-model="selectedProduct.srp" dense readonly filled></v-text-field> 
+                <v-text-field color="#BCAAA4" :rules="nameRules" outlined type="number" :min="1" required prepend-inner-icon="mdi-currency-php" placeholder="Total Amount" label="Total Amount" v-model="selectedProduct.product_total_amount" dense readonly filled></v-text-field> 
             </v-form>
             <v-card-actions>
                 <v-spacer/>

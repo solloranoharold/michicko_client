@@ -53,6 +53,12 @@ export default {
             v => !!v || 'This field is required'
         ],
     }),
+    async created() {
+        if ((this.userInfo.position_id == 0 || this.userInfo.position_id==1) && !this.$route.params.organization_id) {
+            this.$router.push('/organization')
+            return
+         }
+    },
     props: {
         dialog:{
             type: Boolean,
@@ -103,7 +109,8 @@ export default {
             }
         },
         close() {
-            this.$emit('closeEpaymentDialog' , false )
+            this.$emit('closeEpaymentDialog', false)
+            this.editedObj={}
         }
     }
 }

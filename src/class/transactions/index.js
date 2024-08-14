@@ -126,6 +126,11 @@ export default class Transactions {
         let a = await axios.getRequest(`/transactions/loadCommissions/${organization_id}/${employee_id}/${date1}/${date2}`)
         return await a 
     }
+    async loadAllEmployeesCommission( organization_id ,  date1 , date2 ) {
+        let a = await axios.getRequest(`/transactions/loadEmployeesCommission/${organization_id}/${date1}/${date2}`)
+        return await a 
+    }
+    
     async getClientTransactions(organization_id,client_id , date1 , date2) {
          let a = await axios.getRequest(`/transactions/getClientTransactions/${organization_id}/${client_id}/${date1}/${date2}`)
         return await a 

@@ -79,6 +79,12 @@ export default {
             console.log('saveDataObj' , this.editedObj )
         },
     },
+    async created() {
+        if ((this.userInfo.position_id == 0 || this.userInfo.position_id == 1) && !this.$route.params.organization_id) {
+            this.$router.push('/organization')
+            return
+        }  
+    },
     methods: {
         async loadOrganizations() {
             let organization_id =this.$route?.params?.organization_id ?this.$route.params.organization_id: this.userInfo.organization_id

@@ -77,21 +77,6 @@
                         <v-btn @click="getData()" block color="#BCAAA4" dark  ><v-icon>mdi-magnify</v-icon>Search</v-btn>
                     </v-col>
                 </v-row>
-                 
-                <!-- <v-toolbar flat dense>
-                    <v-layout>
-                    <v-flex md3 sm="6" xs="6" pt-4>
-                       
-                        
-                    </v-flex>
-                    <v-flex md3 sm="6" xs="6" pt-4>
-                        
-                    </v-flex>
-                    <v-flex md2 sm="4" xs="4" pt-4>
-                        <v-btn @click="getData()" color="#BCAAA4" dark rounded ><v-icon>mdi-magnify</v-icon>Search</v-btn>
-                    </v-flex>
-                </v-layout>
-                </v-toolbar> -->
                 <LoaderView :loadingText="loadingText" v-if="loading"/>
                 <v-row v-else>
                     <v-col>

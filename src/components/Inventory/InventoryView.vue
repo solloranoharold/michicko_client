@@ -16,7 +16,7 @@
                 <v-toolbar flat dense>
                     
                     <v-flex md3>
-                        <v-text-field v-model="search" color="#BCAAA4" clearable dense label="Search" append-icon="mdi-magnify" @click:append="searchProducts"></v-text-field>
+                        <v-text-field v-model="search" color="#BCAAA4" clearable dense label="Search" append-icon="mdi-magnify" @click:append="searchProducts" @keyup.enter="searchProducts"></v-text-field>
                     </v-flex>
                     <v-spacer/>
                     <label style="font-size: 11px;">Legends :  <v-chip x-small color="#B0BEC5" text-color="white" > Not enough quantity </v-chip><v-chip x-small color="black" outlined text-color="black">Enough Quantity </v-chip></label>

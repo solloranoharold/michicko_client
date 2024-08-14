@@ -17,7 +17,7 @@
                 <v-toolbar flat dense>
                     
                     <v-flex md3>
-                        <v-text-field v-model="search" color="#BCAAA4" clearable dense label="Search" append-icon="mdi-magnify" @click:append="searchAccount"></v-text-field>
+                        <v-text-field v-model="search" color="#BCAAA4" clearable dense label="Search" append-icon="mdi-magnify" @click:append="searchAccount" @keyup.enter="searchAccount"></v-text-field>
                     </v-flex>
                 </v-toolbar>
             </template>

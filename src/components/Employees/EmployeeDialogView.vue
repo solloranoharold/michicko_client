@@ -17,27 +17,31 @@
                 <v-form
                     ref="form"
                     v-model="valid"
-                    lazy-validation
+                    lazy-validation 
                     class="textTitle"
                 >
-                     <v-autocomplete :rules="nameRules" auto-select-first item-value="organization_id" item-text="organization_name"  required prepend-inner-icon="mdi-domain" placeholder="Organization"  :items="organizations" v-model="editedObj.organization_id"></v-autocomplete>
+                    <!-- {{  editedObj }} -->
+                     <!-- <v-autocomplete :rules="nameRules" auto-select-first item-value="organization_id" item-text="organization_name"  required prepend-inner-icon="mdi-domain" placeholder="Organization"  :items="organizations" v-model="editedObj.organization_id"></v-autocomplete> -->
                     <v-text-field :rules="nameRules" required prepend-inner-icon="mdi-account" placeholder="Last Name" v-model="editedObj.last_name"></v-text-field>
                     <v-text-field :rules="nameRules"  required prepend-inner-icon="mdi-account" placeholder="First Name" v-model="editedObj.first_name"></v-text-field>
                     <v-text-field  prepend-inner-icon="mdi-account" placeholder="Middle Name(optional)" v-model="editedObj.middle_name"></v-text-field>
                     <v-text-field required prepend-inner-icon="mdi-email" placeholder="Email" :rules="emailRules" v-model="editedObj.email"></v-text-field>
-
+                     <v-text-field prepend-inner-icon="mdi-account" placeholder="NickName(Optional)" v-model="editedObj.nickname"></v-text-field>
                     <v-layout>
                         <v-autocomplete :rules="nameRules"  required prepend-inner-icon="mdi-account" placeholder="Position"  :items="positions" v-model="editedObj.position"></v-autocomplete>
                         <v-text-field :rules="nameRules"  required prepend-inner-icon="mdi-percent" placeholder="Commissions" type="number" min="1" v-model="editedObj.commissions"></v-text-field>
                     </v-layout>
                      <v-layout>
                     <v-text-field :rules="nameRules"  required prepend-inner-icon="mdi-counter" placeholder="Age" type="number" min="1" v-model="editedObj.age"></v-text-field>
-                    <v-autocomplete :rules="nameRules"  required prepend-inner-icon="mdi-gender-male" placeholder="Gender"  :items="['Male' , 'Female']" v-model="editedObj.gender"></v-autocomplete>
+                    <v-autocomplete :rules="nameRules"  required prepend-inner-icon="mdi-gender-male" placeholder="Gender"  :items="['Male' , 'Female' ,'Others']" v-model="editedObj.gender"></v-autocomplete>
                     </v-layout>
-                    <v-textarea :rules="nameRules"  required prepend-inner-icon="mdi-map-marker" placeholder="Address" v-model="editedObj.address"></v-textarea>
+                    <v-text-field v-model="genderOthers" v-if="editedObj.gender== 'Others'" prepend-inner-icon="mdi-gender-male" placeholder="Gender" dense></v-text-field>
+                    <v-textarea :rules="nameRules"  required prepend-inner-icon="mdi-map-marker" placeholder="Address 1 " v-model="editedObj.address_1"></v-textarea>
+                    <v-textarea  required prepend-inner-icon="mdi-map-marker" placeholder="Address 2 " v-model="editedObj.address_2"></v-textarea>
+                    <v-textarea  required prepend-inner-icon="mdi-map-marker" placeholder="Address 3 " v-model="editedObj.address_3"></v-textarea>
                 </v-form>
                     <v-card-actions class="justify-end">
-                        <v-btn :disabled="!valid"
+                        <v-btn 
                         @click="saveUpdateEmployee()"
                          class="textTitle" rounded dark color="#BCAAA4"
                     ><v-icon>mdi-account-plus</v-icon>{{ editedObj.method== 0 ? 'Add':"Update" }} Employee</v-btn>
@@ -70,14 +74,17 @@ export default {
         classEmployees: new Employees(), 
          classOrg: new Organizations(),
         valid:false,
-        editedIndex: -1 , 
+        editedIndex: -1, 
+        genderOthers:"",
         editedObj:{
             last_name:"" , 
             first_name:"" , 
             middle_name:"",
             age: null,
             email: "",
-            address: "",
+            address_1: "",
+            address_2: "",
+            address_3: "",
             gender:"",
             position:"",
            
@@ -117,19 +124,26 @@ export default {
         
     },
     async created() {
+          if ((this.userInfo.position_id == 0 || this.userInfo.position_id == 1) && !this.$route.params.organization_id) {
+                this.$router.push('/organization')
+                return
+            }
         await this.loadOrganizations()
     },
     methods: {
         async loadOrganizations() {
             let organization_id = this.$route?.params?.organization_id ? this.$route.params.organization_id: this.userInfo.organization_id
+            console.log(organization_id , 'organization')
             await this.classOrg.readOrganizationsPerID(organization_id).then((data) => { 
+                console.log(data  , 'loadlOrga')
                 this.editedObj.organization_id = data[0].organization_id
             })
             
         },
        async saveUpdateEmployee(){
             if (this.$refs.form.validate()) {
-                this.loading=true
+                this.loading = true
+                if(this.genderOthers) this.editedObj.gender = this.genderOthers
                await this.classEmployees.addUpdateEmployee(this.editedObj).then(() => {
                     this.loading = false 
                     this.close()
@@ -146,7 +160,8 @@ export default {
         return `${month}/${day}/${year}`
       },
         close(){
-            this.editedObj={}
+            this.editedObj = {}
+            this.genderOthers=""
             this.$emit("closeDialog" ,false )
         }
     }

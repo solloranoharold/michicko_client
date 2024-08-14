@@ -9,14 +9,14 @@
                     <v-toolbar flat dense>
                     <label class="textTitle" style="font-size: 13px;"> Page {{page}} of {{ totalPages }}, Total Items: {{ totalCountTransaction }}</label>
                     <v-spacer/>
-                         <v-btn :disabled="userInfo.position==0 || userInfo.position==1" class="textTitle" @click="$router.push('/pos')"  rounded dark color="#BCAAA4"><v-icon>mdi-content-cut</v-icon>Create Transactions</v-btn>
+                         <v-btn :disabled="userInfo.position_id==0 || userInfo.position==1" class="textTitle" @click="$router.push('/pos')"  rounded dark color="#BCAAA4"><v-icon>mdi-content-cut</v-icon>Create Transactions</v-btn>
                      </v-toolbar>
                     <br/>
                     <i class="textTitle" style="font-size: 11px;">click<v-icon>mdi-magnify</v-icon> to search specific data</i>
                     <v-toolbar flat dense>
                         
                         <v-flex md3>
-                            <v-text-field class="textTitle" v-model="search" color="#BCAAA4" clearable dense label="Search" append-icon="mdi-magnify" @click:append="searchTransaction"></v-text-field>
+                            <v-text-field class="textTitle" v-model="search" color="#BCAAA4" clearable dense label="Search" append-icon="mdi-magnify" @click:append="searchTransaction" @keyup.enter="searchTransaction"></v-text-field>
                         </v-flex>
                         <v-spacer/>
                         <label style="font-size: 11px;">Legends :  <v-chip x-small color="red" text-color="white" > Cancelled </v-chip><v-chip x-small color="black" outlined text-color="black"> Active </v-chip></label>
@@ -88,6 +88,24 @@
             ></v-pagination>
         </div>
         <LoaderView  v-else/>
+
+
+        <v-dialog persistent max-width="300px" v-model="dialog">
+                <v-card>
+                    <v-card-title>Validate Password</v-card-title>
+                    <v-card-text>
+                       <v-form>
+                         <v-text-field label="Username" placeholder="Username" prepend-icon="mdi-account" readonly v-model="userInfo.username"></v-text-field>
+                        <v-text-field label="Password" @keyup.enter="validatePassword()" placeholder="Password"  dense type='password' prepend-icon="mdi-lock" v-model="password"></v-text-field>
+                       </v-form>
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-spacer/>
+                            <v-btn dark small rounded color="success" @click="validatePassword()"> submit </v-btn>
+                            <v-btn dark small rounded color="red" @click="dialog = !dialog , password=''"> close </v-btn>
+                        </v-card-actions>
+                </v-card>
+        </v-dialog>
     </v-container>
 
 
@@ -98,10 +116,12 @@ import Transactions from '@/class/transactions';
 import Swal from 'sweetalert2'
 import moment from 'moment'
 import LoaderView from '@/views/LoaderView.vue';
+import Accounts from '@/class/accounts';
 export default {
     components:{LoaderView},
     data: () => ({
         classTransaction: new Transactions(),
+        classAccount : new Accounts(),
         menu: false, menu1: false,
         date1: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
         date2: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
@@ -111,7 +131,10 @@ export default {
         itemsPerPage: 20 ,  
         totalItems: 0, 
         totalCountTransaction: 0,
-        loading:false , 
+        loading: false, 
+        dialog: false,
+        password: "",
+        obj:{},
     }),
      computed: {
          totalPages() {
@@ -139,6 +162,48 @@ export default {
        await this.evaluateData()
     },
     methods: {
+        async validatePassword() {
+             let data =  await this.classAccount.loginAccount( this.userInfo.username , this.password )
+            console.log(data )
+            if (!data.error) {
+                  Swal.fire({
+                    title: `Are you want to update this transaction ?`,
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: `Yes, update it!`,
+                }).then(async (result) => { 
+                    if (result.isConfirmed) {
+                        await this.classTransaction.updateHistoryTransactions(this.obj).then(async(data) => {
+                            console.log(data)
+                             Swal.fire({
+                                    toast: true,
+                                    position:'bottom-end',
+                                    title: `Transaction has been updated!`,
+                                    icon: "success",
+                                    timer: 1000,
+                                    showConfirmButton:false
+                            })
+                            await this.loadAllTransactionsPerPage()
+                        })
+                    
+                    }
+                })
+            } else {
+                 Swal.fire({
+                        toast: true,
+                        position:'bottom-end',
+                        title: `Incorrect Password!`,
+                        icon: "error",
+                        timer: 1000,
+                        showConfirmButton:false
+                })
+            }
+            this.dialog = !this.dialog
+            this.password = ""
+        },
         async evaluateData() {
             this.search = this.search ==null ? undefined : this.search 
             await this.loadAllTransactionsPerPage()
@@ -181,28 +246,14 @@ export default {
         },
         async updateTransaction(item, status) {
             console.log(item, status, this.userInfo.employee_id) 
-            let obj = { 
+            this.obj = { 
                 transaction_id: item.transaction_id,
                 status: status,
                 updated_by: this.userInfo.employee_id,
                 deleted_date: status==0 ? moment().format('YYYY-MM-DD HH:mm:ss'): null 
             }
-            Swal.fire({
-                title: `Are you want to update this transaction ?`,
-                text: "You won't be able to revert this!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: `Yes, update it!`,
-            }).then(async (result) => { 
-                if (result.isConfirmed) {
-                    await this.classTransaction.updateHistoryTransactions(obj).then(async(data) => { 
-                        console.log(data)
-                        await this.loadAllTransactionsPerPage()
-                    })
-                }
-            })
+             this.dialog = !this.dialog
+          
           
         },
         async loadAllTransactionsPerPage() {

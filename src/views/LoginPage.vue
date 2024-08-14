@@ -123,7 +123,7 @@ export default {
                          
                        ]
                        this.$store.commit('GROUP_MODULES' , [ 
-                           { text: 'Services', icon: 'mdi-bottle-soda-classic-outline', name: '/inventory' },
+                           { text: 'Service Products', icon: 'mdi-bottle-soda-classic-outline', name: '/inventory' },
                            { text:'OTC Products ', icon: 'mdi-bottle-soda-classic-outline', name: '/products' },
                         ])
                        this.$store.commit('STORE_NAVBAR' , navbar )
