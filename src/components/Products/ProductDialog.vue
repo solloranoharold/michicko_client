@@ -30,7 +30,7 @@
                         <v-text-field label="Quantity" :readonly="editedObj.method == 1 " :rules="nameRules" type="number" :min="1" required prepend-inner-icon="mdi-plus-box" placeholder="Quantity" v-model="editedObj.quantity"></v-text-field> 
                         
                     </v-layout>
-                      <v-switch
+                      <v-switch v-if="editedObj.method == 1"
                         v-model="stocks"
                         flat
                         :label="`Add Stocks`"

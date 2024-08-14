@@ -221,7 +221,9 @@
                     <v-toolbar flat dense>
                         <h2 class="text-center">OTC PRODUCTS </h2>
                         <v-spacer/>
+                         <v-btn :disabled="tableOTCProducts.length == 0 " @click="tableOTCProducts=[]" rounded   color="#BCAAA4"  dark><v-icon>mdi-close</v-icon>clear otc </v-btn>
                         <v-btn @click="addOTCProduct()" rounded   color="#BCAAA4"  dark><v-icon>mdi-plus-circle-outline</v-icon>add OTC PRODUCT</v-btn>
+                        
                     </v-toolbar>
                     <v-simple-table dense>
                                <thead>

@@ -30,10 +30,11 @@
                         <v-text-field label="Quantity (piece)"  :readonly="editedObj.method == 1 " :rules="nameRules" type="number" :min="1" required prepend-inner-icon="mdi-plus-box" placeholder="Quantity (piece)" v-model="editedObj.quantity"></v-text-field> 
                         
                     </v-layout>
-                      <v-switch
+                      <v-switch 
                         v-model="stocks"
                         flat
                         :label="`Add Stocks`"
+                        v-if="editedObj.method == 1"
                     ></v-switch>
                     <v-text-field label="Add Stocks"  v-if="editedObj.method == 1 && stocks" :rules="editedObj.method == 1 && stocks? nameRules : ''" type="number" :min="1" required prepend-inner-icon="mdi-plus-box" placeholder="Quantity (piece)" v-model="historyObj.added_quantity"></v-text-field> 
                     
