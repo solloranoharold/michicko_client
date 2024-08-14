@@ -833,6 +833,7 @@ export default {
                     
                         await this.createTransaction().then(async () => { 
                             await this.createTransactionServices()
+                            await this.createTransactionServicesProduct()
                             await this.evaluateAffectedServicesProduct()
                             await this.createTransactionsOTCProducts()
                             await this.createTransactionsServicesCommissions()
