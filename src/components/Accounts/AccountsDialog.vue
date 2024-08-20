@@ -134,7 +134,7 @@ export default {
         async loadOrganizations() {
             let organization_id =this.$route?.params?.organization_id ?this.$route.params.organization_id: this.userInfo.organization_id 
             this.organizations = await this.classOrg.readOrganizationsPerID(organization_id)
-            this.editedObj.organization_id = this.organizations
+            // this.editedObj.organization_id = this.organizations
             console.log(this.organizations ,'loadOrganizations')
         },
         async addUpdateAccount() {
