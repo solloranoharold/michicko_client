@@ -80,12 +80,14 @@ export default {
     watch: { 
         value(val) {
             if (val) {
+                
                 this.loadOrganizations()
                 this.loadEmployeesData()
                 this.loadPositions()
             }
         },
-        saveDataObj(val){
+        saveDataObj(val) {
+            let organization_id = this.$route?.params?.organization_id ? this.$route.params.organization_id : this.userInfo.organization_id 
             if(Object.keys(val).length !== 0 ) {
                 this.editedObj = JSON.parse(JSON.stringify(val))
                 delete this.editedObj.password
@@ -93,6 +95,7 @@ export default {
             }else{
                 this.editedObj.method = 0
             }
+            this.editedObj.organization_id = organization_id
             console.log('saveDataObjasdasdas' , this.editedObj )
         }
     },
@@ -131,7 +134,7 @@ export default {
         async loadOrganizations() {
             let organization_id =this.$route?.params?.organization_id ?this.$route.params.organization_id: this.userInfo.organization_id 
             this.organizations = await this.classOrg.readOrganizationsPerID(organization_id)
-            this.editedObj.organization_id = this.organizations[0].organization_id
+            this.editedObj.organization_id = this.organizations
             console.log(this.organizations ,'loadOrganizations')
         },
         async addUpdateAccount() {
