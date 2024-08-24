@@ -526,7 +526,8 @@ export default {
         evaluateServiceProduct() {
             console.log(this.serviceProductObj, 'evaluateServiceProduct')
             // let value = this.serviceProductObj.less_quantity / 100 
-            if (parseFloat(this.serviceProductObj.less_quantity).toFixed(2) > parseFloat(this.serviceProductObj.total_value).toFixed(2)) {
+            console.log(parseFloat(this.serviceProductObj.less_quantity) , parseFloat(this.serviceProductObj.total_value))
+            if (parseFloat(this.serviceProductObj.less_quantity) > parseFloat(this.serviceProductObj.total_value)) {
                 alert(`${this.serviceProductObj.product_name} quantity is not enough`)
                 return false 
             }
