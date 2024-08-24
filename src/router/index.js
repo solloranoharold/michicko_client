@@ -17,6 +17,7 @@ import DashboardView from '@/components/Dashboard/DashboardView.vue'
 import CashlessView from '@/components/Cashless/CashlessView.vue';
 import SuperAdministrators from '@/components/SuperAdministrators/SuperAdministrators.vue'
 import SuperAdministratorAccounts from '@/components/SuperAdministrators/SuperAdministratorAccounts.vue';
+import ExpensesView from '@/components/Expenses/ExpensesView.vue';
 import Swal from 'sweetalert2'
 import store from '@/store'
 // import Accounts from '@/class/accounts';
@@ -101,6 +102,12 @@ const routes = [
     name: 'super_administrators_accounts',
     component: SuperAdministratorAccounts
   },
+    {
+    path: '/expenses',
+    name: 'expenses',
+    component: ExpensesView
+  },
+  // 
     // 
     // 
   //  

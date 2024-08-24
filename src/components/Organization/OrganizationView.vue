@@ -127,12 +127,13 @@ export default {
         ],
         modules: [
             { text: 'Dashboard', icon: 'mdi-home', name: 'dashboard' },
-            { text: "Transactions",icon: "mdi-currency-php", name: 'transactions' },
+            { text: "Transactions", icon: "mdi-currency-php", name: 'transactions' },
+            { text: 'Expenses', icon: 'mdi-currency-php', name: 'expenses' },
             { text: 'Employees', icon: 'mdi-account-multiple-outline', name: 'employee' },
             { text: 'Accounts', icon: 'mdi-book-cog-outline', name: 'accounts' },
             { text: 'Services', icon: 'mdi-content-cut', name: 'services' },
             { text: 'Clients', icon: ' mdi-monitor-account', name: 'clients' },
-           { text: "Cashless Methods", name: 'cashless', 'icon': "mdi-credit-card-marker" },
+            { text: "Cashless Methods", name: 'cashless', 'icon': "mdi-credit-card-marker" },
              { text: "Reports", name: 'reports', 'icon': "mdi-account-multiple" },
             
         ],

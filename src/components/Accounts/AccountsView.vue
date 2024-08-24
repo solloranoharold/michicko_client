@@ -114,7 +114,7 @@ export default {
         getObj: {},
         dialog: false,
         totalCountAccounts: 0 ,
-        itemsPerPage: 20 ,  
+        itemsPerPage: 1 ,  
         totalItems: 0 , 
         page: 1, 
         search: '',
@@ -122,8 +122,11 @@ export default {
         loading:false 
     }),
     computed:{
-        totalPages(){
-            return  Math.ceil(this.totalCountAccounts / this.itemsPerPage);
+        totalPages() {
+            console.log(this.totalCountAccounts, this.itemsPerPage, 'xxxx')
+            return Math.ceil(this.totalCountAccounts / this.itemsPerPage);
+           
+          
         },
         getRandomColor() {
             // Function to generate a random number between 0 and 255
@@ -174,17 +177,20 @@ export default {
             console.log(obj , 'resetPassword')
         },  
         async evaluteAccounts() {
-            this.hasPage=true
+            // this.hasPage=true
             await this.getTotalEmployeeCount()
             await this.loadAccountsPerPage()
         },
         async getTotalEmployeeCount() {
             this.loading=true
             let organization_id =this.$route?.params?.organization_id ?this.$route.params.organization_id: this.userInfo.organization_id
-            let a =  await this.classAccount.getAccountTotalCount( this.userInfo.employee_id , organization_id ,this.search)
-             this.totalCountAccounts = a.TOTAL 
-            console.log(this.totalCountAccounts , 'this.totalCountAccounts')
-            this.loading=false 
+            await this.classAccount.getAccountTotalCount(this.userInfo.employee_id, organization_id, this.search).then((a) => {
+                 this.totalCountAccounts = a.TOTAL 
+                console.log(a , 'sdsds')
+                console.log(this.totalCountAccounts , 'this.totalCountAccounts')
+                this.loading=false 
+            })
+           
         },
         async loadAccountsPerPage() {
             this.loading=true

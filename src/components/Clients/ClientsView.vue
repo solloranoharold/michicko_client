@@ -26,7 +26,7 @@
                     <th>Client Name </th>
                     <th>Contact No</th>
                     <th>Email</th>
-                    <th>Address
+                    <th>Address</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -62,7 +62,7 @@
             </v-simple-table>
             
         </v-card>
-         <div class="text-center textTitle" v-if="hasPage && !loading">
+         <div class="text-center textTitle" v-if=" !loading">
             <v-pagination 
             color="#BCAAA4"
             v-model="page"
@@ -178,10 +178,12 @@ export default {
             this.loading=false
         },
         async loadClientsPerPage() {
+            this.loading=true
              let organization_id =this.$route?.params?.organization_id ?this.$route.params.organization_id: this.userInfo.organization_id
             let data = await this.classClient.loadClients( organization_id , this.page , this.itemsPerPage )
            
             this.clients = data
+            this.loading = false 
             console.log(this.clients , 'loadClientsPerPage')
         },
         closeDialog(val) {

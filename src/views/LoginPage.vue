@@ -114,7 +114,8 @@ export default {
                       let navbar = [ 
                          { name: "Dashboard", path: '/', 'icon': "mdi-home" },
                          { name: "Transactions", path: '/transactions', 'icon': "mdi-currency-php" },
-                         { name:"Accounts" ,path:'/accounts' , 'icon':"mdi-account-multiple"},
+                         { name: "Expenses", path: '/expenses', 'icon': "mdi-currency-php" },
+                         { name: "Accounts", path: '/accounts', 'icon': "mdi-account-multiple" },
                          { name: "Employees", path: '/employees', 'icon': "mdi-account-multiple" },
                          { name: "Clients", path: '/clients', 'icon': "mdi-account-multiple" },
                          { name: "Services", path: '/services', 'icon': "mdi-content-cut" },
