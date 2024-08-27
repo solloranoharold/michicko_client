@@ -128,7 +128,7 @@ export default {
         modules: [
             { text: 'Dashboard', icon: 'mdi-home', name: 'dashboard' },
             { text: "Transactions", icon: "mdi-currency-php", name: 'transactions' },
-            { text: 'Expenses', icon: 'mdi-currency-php', name: 'expenses' },
+            // { text: 'Expenses', icon: 'mdi-currency-php', name: 'expenses' },
             { text: 'Employees', icon: 'mdi-account-multiple-outline', name: 'employee' },
             { text: 'Accounts', icon: 'mdi-book-cog-outline', name: 'accounts' },
             { text: 'Services', icon: 'mdi-content-cut', name: 'services' },

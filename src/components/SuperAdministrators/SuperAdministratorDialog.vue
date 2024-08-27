@@ -31,9 +31,12 @@
                         <v-autocomplete :rules="nameRules"  required prepend-inner-icon="mdi-gender-male" placeholder="Gender"  :items="['Male' , 'Female' ,'Others']" v-model="editedObj.gender"></v-autocomplete>
                     </v-layout>
                     <v-text-field v-model="genderOthers" v-if="editedObj.gender== 'Others'" prepend-inner-icon="mdi-gender-male" placeholder="Gender" dense></v-text-field>
-                    <v-textarea :rules="nameRules"  required prepend-inner-icon="mdi-map-marker" placeholder="Address 1 " v-model="editedObj.address_1"></v-textarea>
-                    <v-textarea  required prepend-inner-icon="mdi-map-marker" placeholder="Address 2 " v-model="editedObj.address_2"></v-textarea>
-                    <v-textarea  required prepend-inner-icon="mdi-map-marker" placeholder="Address 3 " v-model="editedObj.address_3"></v-textarea>
+                     <v-textarea :rules="nameRules"  required prepend-inner-icon="mdi-map-marker" placeholder="Address " v-model="editedObj.address"></v-textarea>
+                    <v-text-field  required prepend-inner-icon="mdi-map-marker" placeholder="Barangay " v-model="editedObj.brgy"></v-text-field>
+                    <v-layout>
+                        <v-text-field  required prepend-inner-icon="mdi-map-marker" placeholder="Municipality " v-model="editedObj.municipality"></v-text-field>
+                        <v-text-field type="number"  required prepend-inner-icon="mdi-map-marker" placeholder="Zip Code " v-model="editedObj.zip_code"></v-text-field>
+                    </v-layout>
                 </v-form>
                     <v-card-actions class="justify-end">
                         <v-btn 
@@ -114,7 +117,8 @@ export default {
             }else{
                 this.editedObj.method = 0
             }
-            console.log('saveDataObj' , this.editedObj )
+            console.log('saveDataObj', this.editedObj)
+            this.editedObj.organization_id = this.$route?.params?.organization_id ? this.$route.params.organization_id: this.userInfo.organization_id
         }
         
     },

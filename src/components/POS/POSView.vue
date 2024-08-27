@@ -34,8 +34,25 @@
             </v-expansion-panels>  
              <br/>
         </v-flex>
+      
        
-        <v-card class="floating-card textTitle" >
+       
+        
+      <v-card style="height: 80px;" class="cardHeader textTitle"  color="#ECEFF1" >
+            <v-card-text>
+                <v-row >
+                    <v-col md="4">
+                        <v-autocomplete v-model="transactionObj.client_id" :items="clients" item-value="client_id" item-text="fullname" append-icon="mdi-account"   color="#BCAAA4" label="Client Name" dense outlined clearable ></v-autocomplete>
+                    </v-col>
+                    <v-col>
+                        <v-autocomplete v-model="tableServices" return-object  deletable-chips multiple small-chips color="#BCAAA4"  item-text="service_name" append-icon="mdi-package" :items="services" label="Work Done" dense outlined clearable ></v-autocomplete>
+                    </v-col>
+                </v-row>
+            </v-card-text>
+              
+        </v-card>
+        <br/>
+         <v-card  :class=" !isMobile ? 'floating-card textTitle' : ' textTitle'" >
             <v-card-text>
                 <div>
                         <h2 class="text-center "> PAYMENT COMPUTATIONS</h2>
@@ -102,29 +119,14 @@
                         
             </v-card-text>
          </v-card>
-        
-      <v-card style="height: 80px;" class="cardHeader textTitle"  color="#ECEFF1" >
-            <v-card-text>
-                <v-row >
-                    <v-col md="4">
-                        <v-autocomplete v-model="transactionObj.client_id" :items="clients" item-value="client_id" item-text="fullname" append-icon="mdi-account"   color="#BCAAA4" label="Client Name" dense outlined clearable ></v-autocomplete>
-                    </v-col>
-                    <v-col>
-                        <v-autocomplete v-model="tableServices" return-object  deletable-chips multiple small-chips color="#BCAAA4"  item-text="service_name" append-icon="mdi-package" :items="services" label="Work Done" dense outlined clearable ></v-autocomplete>
-                    </v-col>
-                </v-row>
-            </v-card-text>
-              
-        </v-card>
-        <br/>
-        
+         <br/>
        <v-row  class="textTitle">
       
-        <v-col cols="12" md="12 " lg="12" xs="6" sm="6">
+        <v-col cols="12" md="12 " lg="12" xs="12" sm="12">
              <v-card  color="#ECEFF1" >
             <v-card-text style="height: 750px;">
                 <v-row class="rowContainer">
-                    <v-col md="7" xs="12" sm="12">
+                    <v-col lg="7" md="7" xs="6" sm="6">
                        <v-card class="table-container textTitle"> 
                             <v-simple-table dense >
                                <thead >
@@ -141,7 +143,10 @@
                                </tbody>
                             </v-simple-table>
                        </v-card>
-                            <v-simple-table dense  style="width: 100%;" v-if="tableServicesProduct.length">
+                    </v-col>
+                    <v-col cols="12" md="5" sm="6" xs="6">
+                        <v-card class="table-container">
+                             <v-simple-table dense  style="width: 100%;" >
                                <thead>
                                    <tr style="background-color: #BCAAA4;">
                                         <th style="color:white">SERVICE ITEM</th>
@@ -157,10 +162,14 @@
                                 </tr>
                                </tbody>
                             </v-simple-table>
+                        </v-card>
+                        <br/>
+                         
                     </v-col>
-                    <v-col cols="12" md="5" sm="5" xs="5">
-                        <v-card class="table-container">
-                            <v-card-text>
+                   
+                    <v-col cols="12" md="12" lg="12" sm="12" xs="12">
+                        <v-card>
+                             <v-card-text>
                                 <v-toolbar flat dense>
                                     <v-toolbar-title class="toolbarTitle">
                                          Service Product
@@ -173,19 +182,16 @@
                                 > 
                                      <v-autocomplete  :rules="nameRules" v-model="serviceProductObj" required return-object  color="#BCAAA4"  item-text="product_name" append-icon="mdi-content-cut" :items="serviceProducts" label="Service Product" dense outlined clearable ></v-autocomplete>
                                      <v-text-field :rules="nameRules" outlined type="number" :min="1" required prepend-inner-icon="mdi-plus-box" placeholder="Quantity" v-model="serviceProductObj.less_quantity" dense></v-text-field> 
-                                         <!-- <v-list-item-subtitle>Minimum Required : {{serviceProductObj.net_value ? serviceProductObj.net_value : 0 }} {{serviceProductObj.unit  }}</v-list-item-subtitle> -->
                                      <v-list-item-subtitle>Remaining : {{serviceProductObj.total_value ? serviceProductObj.total_value : 0 }} {{serviceProductObj.unit  }}</v-list-item-subtitle>
                                     </v-form>
-                            </v-card-text>
-                            <v-card-actions class="justify-end">
+                             </v-card-text>
+                              <v-card-actions class="justify-end">
                                 <v-btn @click="evaluateServiceProduct()" rounded block :disabled="!valid || !serviceProductObj.less_quantity" color="#BCAAA4" large dark><v-icon>mdi-plus-circle-outline</v-icon>ADD ITEM</v-btn>
                                
                             </v-card-actions>
                         </v-card>
-                        <br/>
-                         
                     </v-col>
-                     <v-col cols="12" md="12" lg="12" sm="6" xs="6">
+                     <v-col cols="12" md="12" lg="12" sm="12" xs="12">
                     <v-card > 
                         <v-card-text>
                              <v-autocomplete label="Employee Service Commissions" v-model="tableServiceCommissions" return-object item-text="fullname" multiple dense outlined deletable-chips small-chips :items="employeesService"></v-autocomplete>
@@ -219,10 +225,10 @@
             
                 <v-col v-if="switchOtc">
                     <v-toolbar flat dense>
-                        <h2 class="text-center">OTC PRODUCTS </h2>
+                        <h3 class="text-center">OTC PRODUCTS </h3>
                         <v-spacer/>
-                         <v-btn :disabled="tableOTCProducts.length == 0 " @click="tableOTCProducts=[]" rounded   color="#BCAAA4"  dark><v-icon>mdi-close</v-icon>clear otc </v-btn>
-                        <v-btn @click="addOTCProduct()" rounded   color="#BCAAA4"  dark><v-icon>mdi-plus-circle-outline</v-icon>add OTC PRODUCT</v-btn>
+                         <v-btn small :disabled="tableOTCProducts.length == 0 " @click="tableOTCProducts=[]" rounded   color="#BCAAA4"  dark><v-icon>mdi-close</v-icon>clear otc </v-btn>
+                        <v-btn small @click="addOTCProduct()" rounded   color="#BCAAA4"  dark><v-icon>mdi-plus-circle-outline</v-icon>add OTC </v-btn>
                         
                     </v-toolbar>
                     <v-simple-table dense>
@@ -277,6 +283,9 @@
     <LoaderView v-else :loading-text="loadingText"/>
 </template>
 <script>
+
+
+    
 import Clients from '@/class/clients'
 import Services from '@/class/services';
 import Product from '@/class/products';
@@ -333,7 +342,9 @@ export default {
         
         // obj:{}
     }),
+    
     watch: { 
+       
         totalAmount(val) {
             this.transactionObj.transaction_total_amount = parseFloat(val).toFixed(2)
         }, 
@@ -383,6 +394,7 @@ export default {
         }
     },
     async created() {
+        this.handleResize()
         let host = process.env.VUE_APP_API_SOCKET
         console.log(host)
         this.generateTransactionID()
@@ -400,6 +412,7 @@ export default {
         await this.loadAllClass()
     },
     methods: {
+       
         changeTipValue() {
             this.tableServiceCommissions.forEach(item => {
                 item.tip = 0
@@ -465,7 +478,7 @@ export default {
                         Swal.fire({
                         icon: "info",
                         title: "Insert Cashless Payment Method First",
-                        showConfirmButton: true,
+                        showConfirmButton: false,
                         });
                         this.$router.push('/cashless')
                     return false 
@@ -745,7 +758,10 @@ export default {
                 Swal.fire({
                         icon: "error",
                         title: "Select payment method",
-                        showConfirmButton: true,
+                        showConfirmButton: false,
+                        toast: true, 
+                        position: 'bottom-end',
+                        timer:3000,
                     });
                 return false 
             }
@@ -753,7 +769,10 @@ export default {
                  Swal.fire({
                         icon: "error",
                         title: "Please input referrence no!",
-                        showConfirmButton: true,
+                         showConfirmButton: false,
+                         toast: true, 
+                        position: 'bottom-end',
+                        timer:3000,
                     });
                 return false 
             }
@@ -949,6 +968,8 @@ export default {
                  this.loading = false 
             })
         },
+
+        
     
     }
 }
@@ -996,7 +1017,32 @@ export default {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Box shadow for the floating effect */
   transition: transform 0.3s ease-in-out; /* Smooth transition */
   transform: translateY(0); /* Initial position */
+  
 }
 
-
+@media (min-width: 300px) {
+  .floating-card{
+    
+  /* position: relative; */
+  /* float: right; */
+  /* top: 120px; */
+  /* width: 300px;  */
+  margin: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Box shadow for the floating effect */
+  transition: transform 0.3s ease-in-out; /* Smooth transition */
+  transform: translateY(0); /* Initial position */
+  }
+}
+@media (max-width:600px) {
+    .floating-card{
+        /* position: relative; */
+        /* float: right; */
+        /* top: 120px; */
+        /* width: 300px;  */
+        margin: 5px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Box shadow for the floating effect */
+        transition: transform 0.3s ease-in-out; /* Smooth transition */
+        transform: translateY(0); /* Initial position */
+    }
+}
 </style>
