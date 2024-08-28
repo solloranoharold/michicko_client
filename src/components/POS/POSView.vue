@@ -167,6 +167,7 @@
                          
                     </v-col>
                    
+                   
                     <v-col cols="12" md="12" lg="12" sm="12" xs="12">
                         <v-card>
                              <v-card-text>
@@ -190,6 +191,42 @@
                                
                             </v-card-actions>
                         </v-card>
+                    </v-col>
+                    <v-col cols="12" md="12" sm="6" xs="6">
+                         <v-card class="textTitle"> 
+                            <v-card-text>
+                                <v-toolbar flat dense>
+                                     <v-toolbar-title class="toolbarTitle">
+                                     Other Fees
+                                    </v-toolbar-title>
+                                    <v-spacer/>
+                                     <v-btn :disabled="tableOtherFees.length==0" small dark color="#BCAAA4" @click="tableOtherFees.push({})"> validate </v-btn>
+                                    <v-btn small dark color="#BCAAA4" @click="tableOtherFees.push({})"> add </v-btn>
+                                </v-toolbar>
+                                <v-simple-table dense >
+                                    <thead>
+                                       <tr style="background-color: #BCAAA4;">
+                                        <th style="color:white">Description</th>
+                                        <th style="color:white">Price</th>
+                                        <th></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(item , i ) in tableOtherFees" :key="i">
+                                            <td>
+                                                <v-text-field v-model="item.description" :rules="nameRules" color="#BCAAA4" label="Description" placeholder="Description"></v-text-field>
+                                            </td>
+                                            <td>
+                                                <v-text-field v-model="item.price" :rules="nameRules" color="#BCAAA4" type="number" label="Price" placeholder="Price"></v-text-field>
+                                            </td>
+                                            <td align="center">
+                                                <v-icon  dark color="red" @click="tableOtherFees.splice(i , 1 )">mdi-delete-outline</v-icon>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </v-simple-table>
+                            </v-card-text>
+                         </v-card>
                     </v-col>
                      <v-col cols="12" md="12" lg="12" sm="12" xs="12">
                     <v-card > 
@@ -222,7 +259,7 @@
                         :label="`Add OTC Products ?`"
                     ></v-switch>
                 </v-col>
-            
+                
                 <v-col v-if="switchOtc">
                     <v-toolbar flat dense>
                         <h3 class="text-center">OTC PRODUCTS </h3>
@@ -330,6 +367,7 @@ export default {
         tableOTCProducts: [],
         tableServiceCommissions: [],
         tableOTCProductCommissions: [],
+        tableOtherFees:[],
         commissionsData:[],
         nameRules: [
             v => !!v || 'This field is required'

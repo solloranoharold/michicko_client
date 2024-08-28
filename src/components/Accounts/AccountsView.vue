@@ -114,7 +114,7 @@ export default {
         getObj: {},
         dialog: false,
         totalCountAccounts: 0 ,
-        itemsPerPage: 1 ,  
+        itemsPerPage: 20 ,  
         totalItems: 0 , 
         page: 1, 
         search: '',

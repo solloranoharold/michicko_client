@@ -18,6 +18,7 @@ import CashlessView from '@/components/Cashless/CashlessView.vue';
 import SuperAdministrators from '@/components/SuperAdministrators/SuperAdministrators.vue'
 import SuperAdministratorAccounts from '@/components/SuperAdministrators/SuperAdministratorAccounts.vue';
 import ExpensesView from '@/components/Expenses/ExpensesView.vue';
+import DiscountsView from '@/components/Discounts/DiscountsView.vue';
 import Swal from 'sweetalert2'
 import store from '@/store'
 // import Accounts from '@/class/accounts';
@@ -59,6 +60,11 @@ const routes = [
     path: '/pos',
     name: 'pos',
     component: POSView
+  },
+  {
+    path: '/discounts',
+    name: 'discounts',
+    component: DiscountsView
   },
   {
     path: '/login',

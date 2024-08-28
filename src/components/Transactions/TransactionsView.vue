@@ -9,6 +9,7 @@
                     <v-toolbar flat dense>
                     <label class="textTitle" style="font-size: 13px;"> Page {{page}} of {{ totalPages }}, Total Items: {{ totalCountTransaction }}</label>
                     <v-spacer/>
+                       <v-btn :disabled="userInfo.position_id==0 || userInfo.position==1" class="textTitle" @click="$router.push('/discounts')"  rounded dark color="#BCAAA4"><v-icon>mdi-percent</v-icon>Discounts</v-btn>
                          <v-btn :disabled="userInfo.position_id==0 || userInfo.position==1" class="textTitle" @click="$router.push('/pos')"  rounded dark color="#BCAAA4"><v-icon>mdi-content-cut</v-icon>Create Transactions</v-btn>
                      </v-toolbar>
                     <br/>
