@@ -79,7 +79,7 @@ export default {
                //    return false 
                //   }
                // data.isSignIn = true 
-               await Cookies.set('token', data.token , { expires: 1 })
+               await Cookies.set('token', data.token , { expires: 7 })
                  delete data.token 
                //   let obj = { account_id: data.account_id, isSignIn: 1 }
                

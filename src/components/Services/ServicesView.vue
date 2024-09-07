@@ -31,8 +31,8 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(item , i) in services" :key="i" :style="{'background-color': item.status == 1  ? 'transparent' : '#B0BEC5'}">
-                    <td>
+                <tr v-for="(item , i) in services" :key="i" :style="{'background-color': item.service_status == 1  ? 'transparent' : '#B0BEC5'}">
+                  <td>
                         <v-chip outlined small color="black">
                             {{ item.category_name }}
                         </v-chip>
@@ -191,7 +191,7 @@ export default {
                 service_name: item.service_name,
                 price: item.price,
                 commissions: item.commissions,
-                status : item.status== 1 ? 0 : 1 
+                status : item.service_status== 1 ? 0 : 1 
             }
            await this.classService.addUpdateService(obj)
             await this.searchServices()

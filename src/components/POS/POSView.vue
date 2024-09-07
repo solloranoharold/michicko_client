@@ -57,7 +57,7 @@
                 <div>
                         <h2 class="text-center "> PAYMENT COMPUTATIONS</h2>
                         <v-list dense>
-                            <v-list-item>
+                            <v-list-item >
                                 <v-list-item-title> Service Total Amount</v-list-item-title>
                                  <v-list-item-icon> ₱{{ totalAmountServices }}</v-list-item-icon>
                             </v-list-item>
@@ -74,12 +74,35 @@
                                 <v-list-item-title>  Employee OTC Product Commission</v-list-item-title>
                                  <v-list-item-icon> {{ otc.commissions }}%</v-list-item-icon>
                             </v-list-item>
+                            
+                        </v-list>
+                        <v-list dense v-if="tableOtherFees.length > 0 && validateOtherFees ">
+                            <v-list-item-title>Other Fees</v-list-item-title>
+                            <v-list-item v-for="(item , i ) in tableOtherFees" :key="i">
+                                <v-list-item-title>{{ item.description }}</v-list-item-title>
+                                 <v-list-item-icon>₱{{ item.amount  }}{{ item.operation }}</v-list-item-icon>
+                            </v-list-item>
+                        </v-list>
+                         <v-list dense  v-if="Object.keys(selectedDiscount).length > 0 && selectedDiscount!=null ">
+                            <v-list-item-title>Discount</v-list-item-title>
+                            <v-list-item>
+                                <v-list-item-title>Discount( {{ selectedDiscount.description}} ) </v-list-item-title>
+                                 <v-list-item-icon> {{ selectedDiscount.percent  }}%</v-list-item-icon>
+                            </v-list-item>
+                             <v-list-item>
+                                <v-list-item-title>Original Total Amount </v-list-item-title>
+                                 <v-list-item-icon> ₱{{  totalAmount }}</v-list-item-icon>
+                            </v-list-item>
                         </v-list>
                         <br/>
                         <tr> 
-                            <strong>Total Amount to Pay :  <h1> ₱{{ totalAmount}}</h1> </strong>
+                            <strong>Total Amount to Pay :  <h1> ₱{{ Object.keys(selectedDiscount).length > 0  ? totalDiscountedAmount :totalAmount}}</h1> </strong>
                         </tr>
                         <tr> </tr>
+                         <h4 class="text-center">Discounts</h4>
+                         <v-divider style="border:1px solid;"/>
+                         <br/>
+                         <v-select clearable label="Discounts" outlined dense :items="discounts" item-text="description" return-object v-model="selectedDiscount"></v-select>
                         <h4 class="text-center">Payment Methods</h4>
                         <v-divider style="border:1px solid;"/>
                         <v-radio-group
@@ -133,12 +156,15 @@
                                     <tr style="background-color: #BCAAA4;">
                                         <th style="color:white">SERVICE</th>
                                         <th style="color:white">UNIT PRICE</th>
+                                        <th style="color:white">Additional</th>
                                     </tr>
                                </thead>
                                <tbody>
                                 <tr style="border:1px solid;" v-for="(item , i) in tableServices" :key="i" >
                                     <td>{{ item.service_name }}</td>
                                     <td>₱{{ parseFloat(item.price).toFixed(2) }}</td>
+                                    <td style="width:150px"> <v-text-field type="number" dense prepend-inner-icon="mdi-currency-php" v-model="item.additional"></v-text-field></td>
+
                                 </tr>
                                </tbody>
                             </v-simple-table>
@@ -192,7 +218,7 @@
                             </v-card-actions>
                         </v-card>
                     </v-col>
-                    <v-col cols="12" md="12" sm="6" xs="6">
+                    <!-- <v-col cols="12" md="12" sm="6" xs="6">
                          <v-card class="textTitle"> 
                             <v-card-text>
                                 <v-toolbar flat dense>
@@ -207,6 +233,7 @@
                                     <thead>
                                        <tr style="background-color: #BCAAA4;">
                                         <th style="color:white">Description</th>
+                                        <th style="color:white">Operation</th>
                                         <th style="color:white">Price</th>
                                         <th></th>
                                     </tr>
@@ -216,8 +243,11 @@
                                             <td>
                                                 <v-text-field v-model="item.description" :rules="nameRules" color="#BCAAA4" label="Description" placeholder="Description"></v-text-field>
                                             </td>
+                                            <td style="width: 100px;" align="center">
+                                            <v-select  :items="operations" v-model="item.operation"></v-select>
+                                            </td>
                                             <td>
-                                                <v-text-field v-model="item.price" :rules="nameRules" color="#BCAAA4" type="number" label="Price" placeholder="Price"></v-text-field>
+                                                <v-text-field v-model="item.amount" :rules="nameRules" color="#BCAAA4" type="number" label="Price" placeholder="Price"></v-text-field>
                                             </td>
                                             <td align="center">
                                                 <v-icon  dark color="red" @click="tableOtherFees.splice(i , 1 )">mdi-delete-outline</v-icon>
@@ -227,7 +257,7 @@
                                 </v-simple-table>
                             </v-card-text>
                          </v-card>
-                    </v-col>
+                    </v-col> -->
                      <v-col cols="12" md="12" lg="12" sm="12" xs="12">
                     <v-card > 
                         <v-card-text>
@@ -236,17 +266,23 @@
                                 <thead>
                                     <tr style="background-color: #BCAAA4;">
                                         <th  style="color:white">Stylist</th>
-                                        <th  style="color:white">Commission</th>
+                                        <th  style="color:white">Service</th>
+                                        <!-- <th  style="color:white">Commission</th> -->
                                         <th  style="color:white">Total Amount</th>
                                         <th  style="color:white">Tip</th>
                                     </tr>
                                 </thead>
                                 <tbody >
+                                   
                                     <tr style="border:1px solid;" v-for="(item , i ) in JSON.parse(JSON.stringify(serviceCommissions))" :key="i+'a'">
                                         <td> {{item.fullname }}</td>
+                                        <!-- <td> 
+                                            <v-autocomplete :items="tableServices"  label="Select Service" item-text="service_name" item-value="service_id"  v-model="item.service_id" @change="parseServicesValue(item)"></v-autocomplete>
+                                        </td> -->
                                         <td> {{ item.commissions }}%</td>
                                         <td>₱{{ item.commission_total_amount }}</td>
                                         <td style="width: 120px;" ><v-text-field :disabled="transactionObj.payment_method == 'cash'"  type="number" min="1"  @input="parseServicesValue(item)" v-model="item.tip"></v-text-field></td>
+                                        
                                     </tr>
                                 </tbody>
                             </v-simple-table>
@@ -295,6 +331,7 @@
                                 <thead>
                                     <tr style="background-color: #BCAAA4;">
                                         <th  style="color:white">Stylist</th>
+                                        <!-- <th  style="color:white">Product</th> -->
                                         <th  style="color:white">Commission</th>
                                         <th  style="color:white">Total Amount</th>
                                     </tr>
@@ -302,6 +339,9 @@
                                 <tbody >
                                     <tr style="border:1px solid;" v-for="(item , i ) in JSON.parse(JSON.stringify(OTCCommissions))" :key="i+'b'">
                                        <td> {{  item.fullname }}</td>
+                                       <!-- <td> 
+                                            <v-autocomplete :items="tableOTCProducts"  label="Select Product" item-text="product_name" item-value="product_id"  v-model="item.product_id" @change="parseOTCValue(item)"></v-autocomplete>
+                                        </td> -->
                                         <td> {{ item.commissions }}%</td>
                                         <td>₱{{ item.commission_total_amount }}</td>
                                      </tr>
@@ -316,8 +356,84 @@
        </v-row>
        
     <OTCProductsDialogVue :dialog="otcDialog" :products="OTCProducts" @closeDialog ="closeDialog" @OTCProduct="OTCProduct"/>
-    </v-container>
+    
+        <v-dialog v-model="totalDialog"  persistent
+        transition="dialog-top-transition"
+        max-width="500">
+            <v-card>
+                <v-toolbar color="#BCAAA4" dark  class="toolbarTitle">
+                <v-icon>mdi-currency-php</v-icon>SALES INVOICE
+            </v-toolbar>
+            <v-card-text>
+                <br/>
+                <h2 class="text-center "> PAYMENT COMPUTATIONS</h2>
+                 <v-list dense>
+                            <v-list-item >
+                                <v-list-item-title> Service Total Amount</v-list-item-title>
+                                 <v-list-item-icon> ₱{{ totalAmountServices }}</v-list-item-icon>
+                            </v-list-item>
+                             <v-list-item v-for="( service , i ) in tableServiceCommissions" :key="i+'a'">
+                                <v-list-item-title> Employee Service Commission</v-list-item-title>
+                                 <v-list-item-icon> {{ service.commissions }}%</v-list-item-icon>
+                            </v-list-item>
+                          
+                            <v-list-item v-if="tableOTCProducts.length">
+                                <v-list-item-title> OTC Products Total Amount</v-list-item-title>
+                                 <v-list-item-icon> ₱{{ totalAmountOTC }}</v-list-item-icon>
+                            </v-list-item>
+                              <v-list-item v-for="( otc , i ) in tableOTCProductCommissions" :key="i+'b'">
+                                <v-list-item-title>  Employee OTC Product Commission</v-list-item-title>
+                                 <v-list-item-icon> {{ otc.commissions }}%</v-list-item-icon>
+                            </v-list-item>
+                            
+                        </v-list>
+                        <v-list dense v-if="tableOtherFees.length > 0 && validateOtherFees ">
+                            <v-list-item-title>Other Fees</v-list-item-title>
+                            <v-list-item v-for="(item , i ) in tableOtherFees" :key="i">
+                                <v-list-item-title>{{ item.description }}</v-list-item-title>
+                                 <v-list-item-icon>₱{{ item.amount  }}{{ item.operation }}</v-list-item-icon>
+                            </v-list-item>
+                        </v-list>
+                         <v-list dense  v-if="Object.keys(selectedDiscount).length > 0 && selectedDiscount!=null ">
+                            <v-list-item-title>Discount</v-list-item-title>
+                            <v-list-item>
+                                <v-list-item-title>Discount( {{ selectedDiscount.description}} ) </v-list-item-title>
+                                 <v-list-item-icon> {{ selectedDiscount.percent  }}%</v-list-item-icon>
+                            </v-list-item>
+                             <v-list-item>
+                                <v-list-item-title>Original Total Amount </v-list-item-title>
+                                 <v-list-item-icon> ₱{{  totalAmount }}</v-list-item-icon>
+                            </v-list-item>
+                        </v-list>
+                        <br/>
+                        <v-list dense>
+                            <v-list-item>
+                                <v-list-item-title>Payment Method</v-list-item-title>
+                                <v-list-item-icon> {{  transactionObj.payment_method }}</v-list-item-icon>
+                            </v-list-item>
+                             <v-list-item>
+                                <v-list-item-title>Transaction Details</v-list-item-title>
+                                <v-list-item-icon> {{  transactionObj.transaction_details }}</v-list-item-icon>
+                            </v-list-item>
+                        </v-list>  
+                        <br/>
+                        <tr> 
+                            <strong>Total Amount to Pay :  <h1> ₱{{ Object.keys(selectedDiscount).length > 0  ? totalDiscountedAmount :totalAmount}}</h1> </strong>
+                        </tr>
+                
+            </v-card-text>
+            <v-card-actions>
+                <v-spacer/>
+                    <v-btn small dark color="success" @click="submitPOSDialogData()">Submit</v-btn>
+                     <v-btn small dark color="red" @click="totalDialog = !totalDialog">Close</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+</v-container>
     <LoaderView v-else :loading-text="loadingText"/>
+
+
+   
 </template>
 <script>
 
@@ -332,6 +448,7 @@ import LoaderView from '@/views/LoaderView.vue';
 import OTCProductsDialogVue from './OTCProductsDialog.vue';
 import Epayments from '@/class/epayments';
 import Employees from '@/class/employees';
+import Discounts from '@/class/discounts';
 import Swal from 'sweetalert2'
 // decreasing qty 
 import { io } from "socket.io-client";
@@ -342,7 +459,8 @@ export default {
     components:{LoaderView , OTCProductsDialogVue},
     data: () => ({
         switchOtc:false, 
-        socket:null,
+        socket: null,
+        totalDialog:false , 
         classClients: new Clients(),
         classService: new Services(), 
         classProduct: new Product(),
@@ -350,6 +468,7 @@ export default {
         classEmployee: new Employees(),
         classTransaction: new Transactions(),
         classEpayments: new Epayments(),
+        classDiscount: new Discounts(),
         valid: false, 
         serviceProductObj: {},
         otcProductObj: {},
@@ -367,7 +486,8 @@ export default {
         tableOTCProducts: [],
         tableServiceCommissions: [],
         tableOTCProductCommissions: [],
-        tableOtherFees:[],
+        tableOtherFees: [],
+        operations: ['+', '-'],
         commissionsData:[],
         nameRules: [
             v => !!v || 'This field is required'
@@ -377,15 +497,29 @@ export default {
         loading: false, 
         otcDialog: false, 
         transactionID: "",
+        discounts: [],
+        selectedDiscount: {},
         
         // obj:{}
     }),
     
     watch: { 
-       
+        selectedDiscount(val) {
+            if (val == null) this.selectedDiscount = {}  
+        },
         totalAmount(val) {
             this.transactionObj.transaction_total_amount = parseFloat(val).toFixed(2)
+            
         }, 
+        totalDiscountedAmount(val) {
+            this.transactionObj.original_total_amount = this.transactionObj.transaction_total_amount
+            this.transactionObj.transaction_total_amount = parseFloat(val).toFixed(2)
+            this.transactionObj.discount_id = this.selectedDiscount.discount_id
+            this.transactionObj.discount = this.selectedDiscount.percent
+        },
+        otherFees(val) {
+            this.transactionObj.other_fees_total=  parseFloat(val).toFixed(2)
+        },
         totalAmountServices(val) {
             this.transactionObj.service_total_amount = parseFloat(val).toFixed(2)
         },
@@ -397,7 +531,7 @@ export default {
         totalAmountServices() {
             let total = 0
             this.tableServices.forEach(data => { 
-                total= Number(total) + Number( data.price )
+                total= Number(total) + Number( data.price ) + Number(data.additional)
             })
             return parseFloat(total).toFixed(2)
             
@@ -412,14 +546,39 @@ export default {
         totalAmount() {
             let total = 0 
             console.log(this.totalAmountOTC, this.totalAmountServices)
-            total = Math.floor(Number(this.totalAmountServices) +  Number(this.totalAmountOTC) )
+            total = Math.floor(Number(this.totalAmountServices) +  Number(this.totalAmountOTC) +  Number(this.otherFees))
             console.log(total, 'totalAmount')
             return parseFloat(total).toFixed(2)
+        },
+
+        totalDiscountedAmount() {
+            let total = 0 
+            console.log(this.totalAmountOTC, this.totalAmountServices)
+            total = Math.floor(Number(this.totalAmountServices) + Number(this.totalAmountOTC) +  Number(this.otherFees)) 
+            if (Object.keys(this.selectedDiscount).length > 0) {
+                let percent = (this.selectedDiscount.percent / 100)
+                let discount = parseFloat(total).toFixed(2) * parseFloat(percent).toFixed(2)
+                total = parseFloat(total).toFixed(2) - parseFloat(discount).toFixed(2)
+            }
+            return parseFloat(total).toFixed(2)
+        },
+        otherFees() {
+            let total = 0 
+            this.tableOtherFees.forEach(data => { 
+                if (data.amount && data.operation) {
+                    let expression = `${parseFloat(total).toFixed(2)} ${data.operation} ${parseFloat(data.amount).toFixed(2)}`
+                    total = eval(expression)
+                }
+                
+            })
+            console.log(total ,'otherFees')
+           return parseFloat(total).toFixed(2)
         },
         serviceCommissions() {
             this.tableServiceCommissions.forEach(item => {
                 let percent = item.commissions / 100 
                 item.commission_total_amount = parseFloat(this.totalAmountServices * percent).toFixed(2)
+                item.service_id = null
             })
             return this.tableServiceCommissions
         },
@@ -427,9 +586,18 @@ export default {
             this.tableOTCProductCommissions.forEach(item => {
                 let percent = item.commissions / 100 
                 item.commission_total_amount = parseFloat(this.totalAmountOTC * percent).toFixed(2)
+                item.product_id = null
             })
             return this.tableOTCProductCommissions
-        }
+        },
+        validateOtherFees() {
+            let hasBlank = false 
+            this.tableOtherFees.forEach(data => { 
+                hasBlank = data.description && data.amount && data.operation ? true : false 
+            })  
+            return hasBlank
+        },
+        
     },
     async created() {
         this.handleResize()
@@ -494,6 +662,7 @@ export default {
             await this.loadAllInvetory()
             await this.loadAllEmployees()
             await this.loadAllEpayments()
+            await this.loadDiscounts()
             
         },
       
@@ -506,6 +675,15 @@ export default {
             let percent = item.commissions / 100 
            return parseFloat(this.totalAmountOTC * percent).toFixed(2)
              
+        },
+        async loadDiscounts() {
+            let organization_id = this.$route?.params?.organization_id ? this.$route.params.organization_id : this.userInfo.organization_id
+            this.loading = true
+            this.loadingText= "DISCOUNTS"
+            await this.classDiscount.readDiscounts(organization_id).then(data => { 
+                this.discounts = data 
+                this.loading=false 
+            })
         },
         async loadAllEpayments() {
             this.loading = true
@@ -546,7 +724,8 @@ export default {
             this.loadingText = 'SERVICES'
              let organization_id = this.$route?.params?.organization_id ? this.$route.params.organization_id: this.userInfo.organization_id
             await this.classService.loadAllServices(organization_id).then((data) => { 
-                this.services = data 
+                data.forEach( item=> item.additional = 0)
+                this.services =  data
                 console.log(this.services, 'loadAllServices')
                 this.loading = false 
             })
@@ -617,18 +796,18 @@ export default {
             let organization_id = this.$route?.params?.organization_id ? this.$route.params.organization_id : this.userInfo.organization_id
             await this.classEmployee.loadEmployeesOption(organization_id).then((data) => {
                 this.employeesService = JSON.parse(JSON.stringify(data.filter(item => { 
-                    item.fullname = item.nickname ? item.nickname : `${item.last_name} ${item.first_name} ${item.middle_name ? item.middle_name : ""} (${item.position})`
+                    item.fullname = item.nickname ? `${item.nickname} (${item.position})` : `${item.last_name} ${item.first_name} ${item.middle_name ? item.middle_name : ""} (${item.position})`
                     item.commission_total_amount = 0
                     item.commission_type = 'service'
                     item.tip=0
                     return item.position !='Manager' && item.status == 1 
                 })))
                 this.employeesOTC = JSON.parse(JSON.stringify(data.filter(item => { 
-                    item.fullname = item.nickname ? item.nickname :`${item.last_name} ${item.first_name} ${item.middle_name ? item.middle_name : ""} (${item.position})`
+                    item.fullname = item.nickname ? `${item.nickname} (${item.position})` :`${item.last_name} ${item.first_name} ${item.middle_name ? item.middle_name : ""} (${item.position})`
                     item.commission_total_amount = 0
                     item.commission_type = 'otc'
                     item.tip=0
-                    return item.position !='Manager' && item.status == 1 
+                    return item.position !='Manager' && item.position !='Junior' && item.status == 1 
                 })))
                 //  console.log(this.employees , 'loadAllEmployees')
                 this.loading = false 
@@ -767,7 +946,9 @@ export default {
                             tableServiceCommissions: this.tableServiceCommissions,
                             tableServices: this.tableServices,
                             tableServicesProduct: this.tableServicesProduct, 
-                            tableOTCProducts: this.tableOTCProducts
+                            tableOTCProducts: this.tableOTCProducts,
+                            tableOtherFees: this.tableOtherFees,
+                            selectedDiscount: this.selectedDiscount
                         }
                     }
                     let i = this.posDraftTransactions.findIndex(x => x.transaction_id == obj.transaction_id)
@@ -819,8 +1000,23 @@ export default {
                 this.transactionObj.referrence_no = null
                 this.transactionObj.e_payment=null
             }
+            if (this.tableOtherFees.length > 0 && !this.validateOtherFees) {
+                 Swal.fire({
+                        icon: "error",
+                        title: "Other Fees has blank inputs",
+                         showConfirmButton: false,
+                         toast: true, 
+                        position: 'bottom-end',
+                        timer:3000,
+                    });
+                return false 
+            }
             this.transactionObj.total_commissions_otc = 0
-             this.transactionObj.total_commissions_service=0
+            this.transactionObj.total_commissions_service = 0
+             this.totalDialog = !this.totalDialog
+  
+        },
+        async submitPOSDialogData() {
             Swal.fire({
                 title: `Are you want to create this transaction ?`,
                 text: "You won't be able to revert this!",
@@ -880,6 +1076,11 @@ export default {
                             item.total_commissions = commission_otc
                             item.date_created = moment().format('YYYY-MM-DD HH:mm:ss')
                         })
+                        this.tableOtherFees.forEach(item => { 
+                            item.transaction_id = this.transactionID
+                            item.organization_id = this.userInfo.organization_id
+                            item.date_created = moment().format('YYYY-MM-DD HH:mm:ss')
+                        })
                      console.log(this.transactionObj)
                     
                    
@@ -898,10 +1099,11 @@ export default {
                             await this.createTransactionsOTCProducts()
                             await this.createTransactionsServicesCommissions()
                             await this.createTransactionsOTCCommissions()
+                            await this.createTransactionsOtherFees()
                             await this.loadAllClass()   
                        })
                       
-                  
+                    this.totalDialog = false  
                      await  this.socket.emit('load notification')
                        await Swal.fire({
                         icon: "success",
@@ -912,7 +1114,7 @@ export default {
                         showConfirmButton:false , 
                         
                        });
-                      
+                     
                     //   window.location.reload()
                      
                    } catch (error) {
@@ -975,6 +1177,13 @@ export default {
             this.loading = true
            return await this.classTransaction.createTransactionsCommissions(this.OTCCommissions).then(() => {
                 this.loadingText = 'INSERTING TRANSACTION COMMISSIONS'
+                this.loading=false
+            })
+        },
+        async createTransactionsOtherFees() {
+             this.loading = true
+           return await this.classTransaction.createTransactionsOtherFees(this.tableOtherFees).then(() => {
+                this.loadingText = 'INSERTING OTHER FEES'
                 this.loading=false
             })
         },

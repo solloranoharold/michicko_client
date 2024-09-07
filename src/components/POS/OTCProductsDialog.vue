@@ -76,7 +76,7 @@ export default {
         getTotalAmount() {
             console.log('asdasdasdas')
            
-            let less_quantity = this.selectedProduct.less_quantity ? this.selectedProduct.less_quantity : 0
+            let less_quantity = this.selectedProduct.less_quantity ? this.selectedProduct.less_quantity : ""
             let price = this.selectedProduct.srp
             if (this.selectedProduct.quantity <  less_quantity) {
                 alert('Not Enough Quantity')

@@ -48,7 +48,7 @@ export default class Transactions {
        console.log('/createTransactionServices' , data )
         data.forEach(item => {
             for (let key in item) {
-                let hasDelete = key != 'service_id' &&   key!='transaction_id' && key!='organization_id'&& key != 'client_id'&& key != 'total_commissions'
+                let hasDelete = key!='additional' && key!='price' && key != 'service_id' &&   key!='transaction_id' && key!='organization_id'&& key != 'client_id'&& key != 'total_commissions'
                 if (hasDelete) {
                     delete item[key]
                 }
@@ -87,7 +87,7 @@ export default class Transactions {
         console.log('/createTransactionsCommissions', data)
         data.forEach(item => {
             for (let key in item) {
-                let hasDelete = key != 'commission_type' &&  key!='transaction_id' && key!='organization_id' &&  key!='tip' &&  key!='employee_id' &&  key!='commission_total_amount'
+                let hasDelete =key != 'commission_type' &&  key!='transaction_id' && key!='organization_id' &&  key!='tip' &&  key!='employee_id' &&  key!='commission_total_amount'
                 if (hasDelete) {
                     delete item[key]
                 }
@@ -119,6 +119,10 @@ export default class Transactions {
             }
          });
           let a = await axios.postRequest('/transactions/evaluateAffectedOTCProduct', data)
+        return await a 
+    }
+    async createTransactionsOtherFees(data) {
+         let a = await axios.postRequest('/transactions/createTransactionsOtherFees', data)
         return await a 
     }
 

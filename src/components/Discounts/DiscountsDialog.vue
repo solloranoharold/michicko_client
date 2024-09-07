@@ -21,12 +21,13 @@
                     lazy-validation
                     class="textTitle"
                 >
-                 <v-text-field :rules="nameRules" required prepend-inner-icon="mdi-percent" placeholder="Description" label="Description"  v-model="editedObj.description"></v-text-field> 
-                     </v-form>
+                 <v-text-field :rules="nameRules" required prepend-inner-icon="mdi-email" placeholder="Description" label="Description"  v-model="editedObj.description"></v-text-field> 
+                  <v-text-field :rules="nameRules" required prepend-inner-icon="mdi-percent" placeholder="Percent" label="Percent"  v-model="editedObj.percent"></v-text-field> 
+                 </v-form>
                     <v-card-actions class="justify-end">
-                        <v-btn :disabled="!valid"
+                        <v-btn 
                         class="textTitle" rounded dark color="#BCAAA4"
-                        @click="addUpdateEpayment()"
+                        @click="addUpdateDiscount()"
                     ><v-icon>mdi-percent</v-icon>{{ editedObj.method== 0 ? 'Add':"Update" }} Discount</v-btn>
                     
                     </v-card-actions>
@@ -39,10 +40,12 @@
 <script>
 import Organizations from '@/class/organizations';
 import LoaderView from '@/views/LoaderView.vue';
+import Discounts from '@/class/discounts';
 export default {
     components:{LoaderView},
     data: () => ({
         classOrg: new Organizations(),
+        classDiscount: new Discounts(),
         editedObj: {}, organization_id: "", organizations: [],
         loading:false , 
         valid: false,
@@ -84,7 +87,8 @@ export default {
                 this.editedObj.method = 1 
             }else{
                 this.editedObj.method = 0
-            }
+             }
+            this.editedObj.organization_id = this.$route?.params?.organization_id ?this.$route.params.organization_id: this.userInfo.organization_id
             console.log('saveDataObj' , this.editedObj )
         },
     },
@@ -95,11 +99,11 @@ export default {
              this.editedObj.organization_id = this.organizations[0].organization_id
             console.log(this.organizations ,'loadOrganizations')
         },
-        async addUpdateEpayment() {
+        async addUpdateDiscount() {
             if (this.$refs.form.validate()) {
                 console.log(this.editedObj ,'addUpdateEpayment')
                  this.loading=true 
-                 await this.classEpayment.addUpdateEPayment(this.editedObj ).then(()=>{
+                 await this.classDiscount.addUpdateDiscount(this.editedObj ).then(()=>{
                      this.close()
                      this.loading=false 
                  })
