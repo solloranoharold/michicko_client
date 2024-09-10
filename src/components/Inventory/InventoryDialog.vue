@@ -27,7 +27,7 @@
                     <v-layout fill-height>
                         <v-autocomplete label="Unit" :rules="nameRules"  required prepend-inner-icon="mdi-equal" placeholder="Unit"  :items="units" v-model="editedObj.unit"></v-autocomplete>
                         <v-text-field label="Unit Value"  :rules="nameRules" type="number" min="1"  required prepend-inner-icon="mdi-cylinder"  placeholder="Unit Value" v-model="editedObj.net_value"></v-text-field> 
-                        <v-text-field label="Quantity (piece)"  :readonly="editedObj.method == 1 " :rules="nameRules" type="number" :min="0" required prepend-inner-icon="mdi-plus-box" placeholder="Quantity (piece)" v-model="editedObj.quantity"></v-text-field> 
+                        <v-text-field label="Quantity (piece)"  :readonly="editedObj.method == 1 " :rules="editedObj.method == 1 ?  '' : nameRules" type="number" :min="0" required prepend-inner-icon="mdi-plus-box" placeholder="Quantity (piece)" v-model="editedObj.quantity"></v-text-field> 
                         
                     </v-layout>
                       <v-switch 
