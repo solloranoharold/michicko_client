@@ -118,6 +118,7 @@ export default {
     methods: { 
         addUpdateProduct( item = {}) {
             console.log(item)
+            if(item.date_created) delete item.date_created
             this.getObj = item
             this.dialog=!this.dialog
         },
