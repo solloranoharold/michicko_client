@@ -27,7 +27,7 @@
                     <v-layout fill-height>
                          <v-text-field label="SRP" :rules="nameRules" type="number" :min="1" required prepend-inner-icon="mdi-currency-php" placeholder="SRP" v-model="editedObj.srp"></v-text-field> 
                          <v-text-field label="Original Price" :rules="nameRules" type="number" :min="1" required prepend-inner-icon="mdi-currency-php" placeholder="Original Price" v-model="editedObj.price"></v-text-field> 
-                        <v-text-field label="Quantity" :readonly="editedObj.method == 1 " :rules="nameRules" type="number" :min="0" required prepend-inner-icon="mdi-plus-box" placeholder="Quantity" v-model="editedObj.quantity"></v-text-field> 
+                        <v-text-field label="Quantity" :readonly="editedObj.method == 1 " :rules="editedObj.method == 1 ?  '' : nameRules" type="number" :min="0" required prepend-inner-icon="mdi-plus-box" placeholder="Quantity" v-model="editedObj.quantity"></v-text-field> 
                         
                     </v-layout>
                       <v-switch v-if="editedObj.method == 1"
