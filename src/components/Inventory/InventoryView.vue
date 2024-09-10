@@ -119,7 +119,7 @@ export default {
     methods: { 
         addUpdateInventory( item = {}) {
             console.log(item)
-            delete item.date_created
+            if(item.date_created)  delete item.date_created
             this.getObj = item
             this.dialog=!this.dialog
         },
