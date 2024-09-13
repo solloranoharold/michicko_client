@@ -6,7 +6,68 @@
                 <v-btn class="textTitle" @click="addUpdateProduct()" rounded dark color="#BCAAA4"><v-icon>mdi-bottle-soda-classic-outline</v-icon>Add Product</v-btn>
             </v-toolbar>
              <v-card style="height: 700px;"  v-if="!loading">
-            <v-simple-table dense class="table-container textTitle" color="#BCAAA4">
+            <v-data-table 
+                dense 
+                class="table-container textTitle" 
+                color="#BCAAA4" 
+                :items-per-page="itemsPerPage"  
+                hide-default-footer 
+                :sort-by="['product_name', 'quantity']"
+                :sort-desc="[false, true]"
+                multi-sort
+                :headers="headers"
+                :items="inventory"
+                >
+                <template v-slot:top>
+                    <v-toolbar flat dense>
+                    <label style="font-size: 13px;">  {{ inventory.length }} of {{ totalCountInventory }} Items in Page {{ page }}</label>
+                    </v-toolbar>
+                    <br/>
+                    <i style="font-size: 11px;">click<v-icon>mdi-magnify</v-icon> to search specific data</i>
+                    <v-toolbar flat dense>
+                        
+                        <v-flex md3>
+                            <v-text-field v-model="search" color="#BCAAA4" clearable dense label="Search" append-icon="mdi-magnify" @click:append="searchProducts" @keyup.enter="searchProducts"></v-text-field>
+                        </v-flex>
+                        <v-spacer/>
+                        <label style="font-size: 11px;">Legends :  <v-chip x-small color="#B0BEC5" text-color="white" > Not enough quantity </v-chip><v-chip x-small color="black" outlined text-color="black">Enough Quantity </v-chip></label>
+                    </v-toolbar>
+                </template>
+                <template
+                    v-slot:body="{ items }"
+                >
+                <tr v-for="(item , i) in items" :key="i" :style="{'background-color': item.quantity <= item.minimum_qty  ? '#B0BEC5' : 'transparent' }">
+                    <td>{{  item.product_id }}</td>
+                    <td> {{ item.product_name }} </td>
+                     <td> 
+                       <v-chip small text-color="white" color="indigo">
+                         ₱{{ parseFloat(item.srp).toFixed(2) }}
+                       </v-chip>
+                    </td>
+                     <td> 
+                       <v-chip small text-color="white" color="green">
+                         ₱{{ parseFloat(item.price).toFixed(2) }}
+                       </v-chip>
+                    </td>
+                    <td> x{{ item.quantity }} </td>
+                    <td> x{{ item.minimum_qty }} </td>
+                    <td>
+                         <v-tooltip bottom >
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-icon color="blue" @click="addUpdateProduct(item )"  v-bind="attrs"
+                                v-on="on">
+                                mdi-pencil-outline
+                                </v-icon>
+                            </template>
+                            <span>Edit Record</span>
+                        </v-tooltip>
+                    </td>
+                </tr>
+                </template>
+            
+            
+            </v-data-table>
+            <!-- <v-simple-table dense class="table-container textTitle" color="#BCAAA4">
              <template v-slot:top>
                 <v-toolbar flat dense>
                   <label style="font-size: 13px;">  {{ inventory.length }} of {{ totalCountInventory }} Items in Page {{ page }}</label>
@@ -27,8 +88,9 @@
                     <th>Product ID</th>
                     <th>Product</th>
                     <th>SRP</th>
-                     <th>Original Price</th>
+                    <th>Original Price</th>
                     <th>Quantity</th>
+                    <th>Quantity Alert</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -38,7 +100,7 @@
                     <td> {{ item.product_name }} </td>
                      <td> 
                        <v-chip small text-color="white" color="indigo">
-                         ₱{{ parseFloat(item.price).toFixed(2) }}
+                         ₱{{ parseFloat(item.srp).toFixed(2) }}
                        </v-chip>
                     </td>
                      <td> 
@@ -47,6 +109,7 @@
                        </v-chip>
                     </td>
                     <td> x{{ item.quantity }} </td>
+                    <td> x{{ item.minimum_qty }} </td>
                     <td>
                          <v-tooltip bottom >
                             <template v-slot:activator="{ on, attrs }">
@@ -60,7 +123,7 @@
                     </td>
                 </tr>
             </tbody>
-            </v-simple-table>
+            </v-simple-table> -->
             
         </v-card>
          <div class="text-center textTitle" v-if=" !loading">
@@ -92,7 +155,16 @@ export default {
         page: 1, 
         search: '',
         hasPage: true,
-        inventory:[]
+        inventory: [],
+        headers: [
+            { text: 'Product ID', value: 'product_id' },
+            { text: 'Product', value: 'product_name' },
+            { text: 'SRP', value: 'srp' },
+            { text: 'Original Price', value: 'price' },
+            { text:'Quantity',value:'quantity'},
+            { text: 'Quantity Alert', value: 'minimum_qty' },
+            { text: 'Actions', value: 'actions' },
+        ]
     }),
      watch: {
         page(val) {

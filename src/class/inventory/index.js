@@ -4,6 +4,7 @@ import AxiosRequest from '../axiosRequest'
 const axios = new AxiosRequest()
 import moment from 'moment'
 export default class Inventory{ 
+  
     async productHistoryCreate(data) {
          let a = await axios.postRequest(`inventory/productHistoryCreate`, data)
          return await a 

@@ -6,7 +6,10 @@ export default class Accounts {
     constructor() {
         this.tries = 0 
     }
-
+  async getManagerApproval( employee_id , password , organization_id) {
+         let a = await axios.getRequest(`accounts/getManagerApproval/${employee_id}/${password}/${organization_id}`)
+        return await a 
+    }
     async evaluateAccountStatus( organization_id , status ) {
         let a = await axios.getRequest(`accounts/evaluateAccountStatus/${organization_id}/${status}`)
         return await a

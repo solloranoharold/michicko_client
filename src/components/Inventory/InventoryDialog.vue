@@ -27,8 +27,11 @@
                     <v-layout fill-height>
                         <v-autocomplete label="Unit" :rules="nameRules"  required prepend-inner-icon="mdi-equal" placeholder="Unit"  :items="units" v-model="editedObj.unit"></v-autocomplete>
                         <v-text-field label="Unit Value"  :rules="nameRules" type="number" min="1"  required prepend-inner-icon="mdi-cylinder"  placeholder="Unit Value" v-model="editedObj.net_value"></v-text-field> 
-                        <v-text-field label="Quantity (piece)"  :readonly="editedObj.method == 1 " :rules="editedObj.method == 1 ?  '' : nameRules" type="number" :min="0" required prepend-inner-icon="mdi-plus-box" placeholder="Quantity (piece)" v-model="editedObj.quantity"></v-text-field> 
-                        
+                       
+                    </v-layout>
+                    <v-layout>
+                         <v-text-field label="Quantity (piece)"  :readonly="editedObj.method == 1 " :rules="editedObj.method == 1 ?  [] : nameRules" type="number" :min="0" required prepend-inner-icon="mdi-plus-box" placeholder="Quantity (piece)" v-model="editedObj.quantity"></v-text-field> 
+                         <v-text-field label="Quantity Alert"  :rules="nameRules" type="number" :min="0" required prepend-inner-icon="mdi-plus-box" placeholder="Quantity Alert" v-model="editedObj.minimum_qty"></v-text-field> 
                     </v-layout>
                       <v-switch 
                         v-model="stocks"
@@ -39,6 +42,10 @@
                     <v-text-field label="Add Stocks"  v-if="editedObj.method == 1 && stocks" :rules="editedObj.method == 1 && stocks? nameRules : ''" type="number" :min="1" required prepend-inner-icon="mdi-plus-box" placeholder="Quantity (piece)" v-model="historyObj.added_quantity"></v-text-field> 
                     
                     <v-card-actions class="justify-end">
+                        <v-btn :disabled="editedObj.method==0"
+                        class="textTitle" rounded dark color="#BCAAA4"
+                        @click="resetProducts()"
+                    ><v-icon>mdi-bottle-soda-classic-outline</v-icon>Reset Product Stock</v-btn>
                         <v-btn
                         class="textTitle" rounded dark color="#BCAAA4"
                         @click="addUpdateProduct()"
@@ -48,6 +55,29 @@
                 </v-form>
                 </v-card-text>
                 <LoaderView v-else/>
+
+
+            <v-dialog persistent max-width="300px" v-model="resetDialog">
+                <v-card>
+                    <v-card-title>Validate Password</v-card-title>
+                    <v-card-text>
+                       <v-form
+                            ref="form"
+                            v-model="managerValid"
+                            lazy-validation
+                            class="textTitle"
+                        >
+                         <v-select :rules="nameRules" label="Manager" placeholder="Manager" prepend-icon="mdi-account" dense :items="employees" item-value="employee_id" item-text="fullname" v-model="employee_id"></v-select>
+                        <v-text-field  :rules="nameRules" label="Password" @keyup.enter="validatePassword()" placeholder="Password"  dense type='password' prepend-icon="mdi-lock" v-model="password"></v-text-field>
+                       </v-form>
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-spacer/>
+                            <v-btn dark small rounded color="success" @click="validatePassword()"> submit </v-btn>
+                            <v-btn dark small rounded color="red" @click="resetDialog = !resetDialog , password=''"> close </v-btn>
+                        </v-card-actions>
+                </v-card>
+            </v-dialog>
           </v-card>
       </v-dialog>
 </template>
@@ -55,6 +85,9 @@
 import Organizations from '@/class/organizations'
 import Inventory from '@/class/inventory';
 import LoaderView from '@/views/LoaderView.vue';
+import Employees from '@/class/employees';
+import Accounts from '@/class/accounts';
+import Swal from 'sweetalert2'
 export default {
     components:{ LoaderView} , 
      props: {
@@ -94,6 +127,49 @@ export default {
         },
     },
     methods: {
+        async loadEmployees() {
+            let organization_id = this.$route?.params?.organization_id ? this.$route.params.organization_id: this.userInfo.organization_id
+            await this.classEmployees.loadEmployeesOption(organization_id).then(data => { 
+                this.employees = data.filter(rec => { 
+                    rec.fullname = rec.nickname ? rec.nickname : `${rec.last_name} ${rec.first_name}`
+                    return rec.position == 'Manager'
+                })
+           })
+        },
+        async validatePassword() {
+            let organization_id = this.$route?.params?.organization_id ? this.$route.params.organization_id : this.userInfo.organization_id
+            let data = await this.classAccounts.getManagerApproval( this.employee_id , this.password , organization_id)
+            if (data.length) {
+                console.log('asdasdas')
+                this.historyObj.previous_stock = this.editedObj.quantity 
+                this.historyObj.current_stock = 0
+                this.historyObj.organization_id = organization_id 
+
+                this.editedObj.quantity = 0 
+                this.editedObj.net_value = 0 
+                this.editedObj.updated_by = this.userInfo.employee_id
+                this.editedObj.total_value = this.editedObj.net_value * this.editedObj.quantity
+
+                await this.classInventory.addUpdateProduct(this.editedObj).then(async () => {
+                     await this.classInventory.productHistoryCreate( this.historyObj)
+                     this.close()
+                     this.loading=false 
+                 }) 
+            } else {
+                 Swal.fire({
+                        toast: true,
+                        position:'bottom-end',
+                        title: `Password Incorrect!`,
+                        icon: "error",
+                        timer: 1000,
+                        showConfirmButton:false
+                })
+            }
+        },
+        async resetProducts() {
+            this.resetDialog = !this.resetDialog
+           await this.loadEmployees()  
+        },
         async loadOrganizations() {
              let organization_id = this.$route?.params?.organization_id ? this.$route.params.organization_id: this.userInfo.organization_id
             this.organizations = await this.classOrg.readOrganizationsPerID(organization_id)
@@ -141,15 +217,22 @@ export default {
         stocks:false,
         classInventory: new Inventory(),
         classOrg: new Organizations(),
+        classEmployees: new Employees(),
+        classAccounts : new Accounts(),
         editedObj: {},
         valid: false,
          nameRules: [
             v => !!v || 'This field is required'
         ],
         organizations: [],
+        employees: [],
+        employee_id:"",
         units: ['ML', 'G'],
         loading: false,
-        historyObj:{}
+        historyObj: {},
+        resetDialog: false, 
+        password: '',
+        managerValid:false
     })
 }
 </script>

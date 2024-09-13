@@ -6,7 +6,68 @@
                 <v-btn class="textTitle" @click="addUpdateInventory()" rounded dark color="#BCAAA4"><v-icon>mdi-bottle-soda-classic-outline</v-icon>Add Product</v-btn>
             </v-toolbar>
              <v-card style="height: 700px;"  v-if="!loading">
-            <v-simple-table dense class="table-container textTitle" color="#BCAAA4">
+            <v-data-table 
+                dense 
+                class="table-container textTitle" 
+                color="#BCAAA4" 
+                :items-per-page="itemsPerPage"  
+                hide-default-footer 
+                :sort-by="['product_name', 'quantity']"
+                :sort-desc="[false, true]"
+                multi-sort
+                :headers="headers"
+                :items="inventory"
+                >
+                
+                <template v-slot:top>
+                    <v-toolbar flat dense>
+                    <label style="font-size: 13px;">  {{ inventory.length }} of {{ totalCountInventory }} Items in Page {{ page }}</label>
+                    </v-toolbar>
+                    <br/>
+                    <i style="font-size: 11px;">click<v-icon>mdi-magnify</v-icon> to search specific data</i>
+                    <v-toolbar flat dense>
+                        
+                        <v-flex md3>
+                            <v-text-field v-model="search" color="#BCAAA4" clearable dense label="Search" append-icon="mdi-magnify" @click:append="searchProducts" @keyup.enter="searchProducts"></v-text-field>
+                        </v-flex>
+                        <v-spacer/>
+                        <label style="font-size: 11px;">Legends :  <v-chip x-small color="#B0BEC5" text-color="white" > Not enough quantity </v-chip><v-chip x-small color="black" outlined text-color="black">Enough Quantity </v-chip></label>
+                    </v-toolbar>
+                </template>
+                <template
+                    v-slot:body="{ items }"
+                >
+                    <tbody>
+                   <tr v-for="(item , i) in items" :key="i" :style="{'background-color': item.quantity <= item.minimum_qty ? '#B0BEC5' : 'transparent' }">
+                    <td>{{ item.inventory_id }}</td>
+                    <td> {{ item.product_name }} </td>
+                    <td align="center"> {{ item.quantity }} </td>
+                    <td align="center"> {{ item.minimum_qty }} </td>
+                    <td align="center">{{ item.net_value }}{{ item.unit }}</td>
+                     <td align="center"> 
+                        <v-chip small outlined color="green">
+                           {{ item.total_value }} {{ item.unit }}
+                        </v-chip> 
+                    </td>
+                    <!-- <td>{{ item.date_created }}</td> -->
+                     <td>{{ item.updated_date== "Invalid date" ? item.date_created : item.updated_date }}</td>
+                    <td>
+                         <v-tooltip bottom >
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-icon color="blue" @click="addUpdateInventory(item )"  v-bind="attrs"
+                                v-on="on">
+                                mdi-pencil-outline
+                                </v-icon>
+                            </template>
+                            <span>Edit Record</span>
+                        </v-tooltip>
+                    </td>
+                </tr>
+                    </tbody>
+                </template>
+
+            </v-data-table>
+            <!-- <v-simple-table dense class="table-container textTitle" color="#BCAAA4">
              <template v-slot:top>
                 <v-toolbar flat dense>
                   <label style="font-size: 13px;">  {{ inventory.length }} of {{ totalCountInventory }} Items in Page {{ page }}</label>
@@ -27,10 +88,9 @@
                     <th>Product ID</th>
                     <th>Product</th>
                     <th>Quantity</th>
-                    
+                     <th>Quantity Alert</th>
                     <th>Net Value</th>
                     <th>Total Value</th>
-                    <!-- <th>Date Created</th> -->
                     <th>Date Updated </th>
                     <th>Actions</th>
                 </tr>
@@ -40,13 +100,13 @@
                     <td>{{ item.inventory_id }}</td>
                     <td> {{ item.product_name }} </td>
                     <td> {{ item.quantity }} </td>
+                    <td> {{ item.minimum_qty }} </td>
                     <td>{{ item.net_value }}{{ item.unit }}</td>
                      <td> 
                         <v-chip small outlined color="green">
                            {{ item.total_value }} {{ item.unit }}
                         </v-chip> 
                     </td>
-                    <!-- <td>{{ item.date_created }}</td> -->
                      <td>{{ item.updated_date== "Invalid date" ? item.date_created : item.updated_date }}</td>
                     <td>
                          <v-tooltip bottom >
@@ -61,7 +121,7 @@
                     </td>
                 </tr>
             </tbody>
-            </v-simple-table>
+            </v-simple-table> -->
             
         </v-card>
          <div class="text-center textTitle" v-if="!loading">
@@ -93,7 +153,18 @@ export default {
         page: 1, 
         search: '',
         hasPage: true,
-        inventory:[]
+        inventory: [],
+        headers: [
+            { text: 'Product ID', value: 'inventory_id', align: 'center' },
+            { text: 'Product Name', value: 'product_name', align: 'center' },
+            { text: 'Quantity', value: 'quantity', align: 'center' },
+            { text: 'Quantity Alert', value: 'minimum_qty', align: 'center' },
+            { text: 'Net Value', value: 'net_value', align: 'center' },
+            { text: 'Total Value', value: 'total_value', align: 'center' },
+            { text: 'Date Updated', value: 'updated_date', align: 'center' },
+             { text: 'Actions', value: 'actions', align: 'center' },
+            
+        ]
     }),
      watch: {
         page(val) {
