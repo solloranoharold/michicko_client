@@ -49,6 +49,11 @@
                            {{ item.total_value }} {{ item.unit }}
                         </v-chip> 
                     </td>
+                    <td align="center"> 
+                        <v-chip small color="indigo" text-color="white">
+                           ₱{{ parseFloat(item.price).toFixed(2) }} 
+                        </v-chip> 
+                    </td>
                     <!-- <td>{{ item.date_created }}</td> -->
                      <td>{{ item.updated_date== "Invalid date" ? item.date_created : item.updated_date }}</td>
                     <td>
@@ -161,6 +166,7 @@ export default {
             { text: 'Quantity Alert', value: 'minimum_qty', align: 'center' },
             { text: 'Net Value', value: 'net_value', align: 'center' },
             { text: 'Total Value', value: 'total_value', align: 'center' },
+             { text: 'Total Price', value: 'total_price', align: 'center' },
             { text: 'Date Updated', value: 'updated_date', align: 'center' },
              { text: 'Actions', value: 'actions', align: 'center' },
             

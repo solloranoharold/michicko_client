@@ -22,7 +22,7 @@
                     lazy-validation
                     class="textTitle"
                 >
-                    <v-autocomplete dense :rules="nameRules" item-value="organization_id" item-text="organization_name"  required prepend-inner-icon="mdi-domain" placeholder="Organization"  :items="organizations" v-model="editedObj.organization_id"></v-autocomplete>
+                    <!-- <v-autocomplete dense :rules="nameRules" item-value="organization_id" item-text="organization_name"  required prepend-inner-icon="mdi-domain" placeholder="Organization"  :items="organizations" v-model="editedObj.organization_id"></v-autocomplete> -->
                     <v-text-field :rules="nameRules" required prepend-inner-icon="mdi-account" placeholder="Last Name" v-model="editedObj.last_name"></v-text-field> 
                     <v-text-field :rules="nameRules" required prepend-inner-icon="mdi-account" placeholder="First Name" v-model="editedObj.first_name"></v-text-field> 
                     <v-text-field :rules="nameRules" type="number" min="1" required prepend-inner-icon="mdi-phone" placeholder="Contact No" v-model="editedObj.contact_no"></v-text-field> 

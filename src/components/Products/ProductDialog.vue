@@ -26,7 +26,7 @@
                     <v-text-field :rules="nameRules" required prepend-inner-icon="mdi-bottle-soda-classic-outline" placeholder="Product" v-model="editedObj.product_name"></v-text-field> 
                     <v-layout fill-height>
                          <v-text-field label="SRP" :rules="nameRules" type="number" :min="1" required prepend-inner-icon="mdi-currency-php" placeholder="SRP" v-model="editedObj.srp"></v-text-field> 
-                         <v-text-field label="Original Price" :rules="nameRules" type="number" :min="1" required prepend-inner-icon="mdi-currency-php" placeholder="Original Price" v-model="editedObj.price"></v-text-field> 
+                         <v-text-field label="Unit Price" :rules="nameRules" type="number" :min="1" required prepend-inner-icon="mdi-currency-php" placeholder="Unit Price" v-model="editedObj.price"></v-text-field> 
                        
                     </v-layout>
                     <v-layout>
@@ -147,9 +147,11 @@ export default {
                 this.historyObj.previous_stock = this.editedObj.quantity 
                 this.historyObj.current_stock = 0
                 this.historyObj.organization_id = organization_id 
-
+                this.historyObj.total_price = this.editedObj.quantity * this.editedObj.srp 
+                
                 this.editedObj.quantity = 0 
-                this.editedObj.updated_by = this.userInfo.employee_id
+                 this.editedObj.updated_by = this.userInfo.employee_id
+                
              
                 await this.classInventory.addUpdateProduct(this.editedObj).then(async () => {
                      await this.classInventory.productHistoryCreate( this.historyObj)
@@ -184,6 +186,7 @@ export default {
                         this.historyObj.previous_stock = this.editedObj.quantity 
                         this.editedObj.quantity = parseFloat(this.editedObj.quantity) + parseFloat(this.historyObj.added_quantity)
                         this.historyObj.current_stock = this.editedObj.quantity
+                        this.historyObj.total_price = this.editedObj.quantity * this.editedObj.srp
                     }
                 }
                 this.editedObj.updated_by = this.userInfo.employee_id

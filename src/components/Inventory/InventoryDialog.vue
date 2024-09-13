@@ -31,8 +31,10 @@
                     </v-layout>
                     <v-layout>
                          <v-text-field label="Quantity (piece)"  :readonly="editedObj.method == 1 " :rules="editedObj.method == 1 ?  [] : nameRules" type="number" :min="0" required prepend-inner-icon="mdi-plus-box" placeholder="Quantity (piece)" v-model="editedObj.quantity"></v-text-field> 
+                         <v-text-field label="Price" :rules="nameRules" type="number" :min="1" required prepend-inner-icon="mdi-currency-php" placeholder="Price" v-model="editedObj.price"></v-text-field> 
                          <v-text-field label="Quantity Alert"  :rules="nameRules" type="number" :min="0" required prepend-inner-icon="mdi-plus-box" placeholder="Quantity Alert" v-model="editedObj.minimum_qty"></v-text-field> 
                     </v-layout>
+                    
                       <v-switch 
                         v-model="stocks"
                         flat
@@ -144,11 +146,13 @@ export default {
                 this.historyObj.previous_stock = this.editedObj.quantity 
                 this.historyObj.current_stock = 0
                 this.historyObj.organization_id = organization_id 
+                this.historyObj.total_price =this.editedObj.quantity * this.editedObj.price
 
                 this.editedObj.quantity = 0 
                 this.editedObj.net_value = 0 
                 this.editedObj.updated_by = this.userInfo.employee_id
                 this.editedObj.total_value = this.editedObj.net_value * this.editedObj.quantity
+                this.editedObj.total_price = this.editedObj.quantity * this.editedObj.price
 
                 await this.classInventory.addUpdateProduct(this.editedObj).then(async () => {
                      await this.classInventory.productHistoryCreate( this.historyObj)
@@ -189,11 +193,14 @@ export default {
                         this.historyObj.previous_stock = this.editedObj.quantity 
                         this.editedObj.quantity = parseFloat(this.editedObj.quantity) + parseFloat(this.historyObj.added_quantity)
                         this.historyObj.current_stock = this.editedObj.quantity
+                        this.historyObj.total_price =this.editedObj.quantity * this.editedObj.price
                      }
                 }
                 this.editedObj.updated_by = this.userInfo.employee_id
                 this.loading = true 
-                 this.editedObj.total_value = this.editedObj.net_value * this.editedObj.quantity
+                this.editedObj.total_value = this.editedObj.net_value * this.editedObj.quantity
+                this.editedObj.total_price = this.editedObj.quantity * this.editedObj.price
+                 
                 await this.classInventory.addUpdateProduct(this.editedObj).then(async () => {
                     if(this.historyObj.added_quantity && this.stocks ) await this.classInventory.productHistoryCreate( this.historyObj)
                      this.close()

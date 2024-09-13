@@ -160,7 +160,7 @@ export default {
             { text: 'Product ID', value: 'product_id' },
             { text: 'Product', value: 'product_name' },
             { text: 'SRP', value: 'srp' },
-            { text: 'Original Price', value: 'price' },
+            { text: 'Unit Price', value: 'price' },
             { text:'Quantity',value:'quantity'},
             { text: 'Quantity Alert', value: 'minimum_qty' },
             { text: 'Actions', value: 'actions' },

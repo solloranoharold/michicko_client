@@ -11,7 +11,7 @@
                 <v-text-field color="#BCAAA4" prepend-inner-icon="mdi-magnify" placeholder="Search"></v-text-field>
             </v-flex>
             <v-spacer/>
-            <v-btn class="textTitle" small @click="openAllCommission()" rounded dark color="#BCAAA4"><v-icon>mdi-cash-multiple</v-icon> Employees Commission</v-btn>
+            <v-btn :disabled="userInfo.position_id==3" class="textTitle" small @click="openAllCommission()" rounded dark color="#BCAAA4"><v-icon>mdi-cash-multiple</v-icon> Employees Commission</v-btn>
         </v-toolbar>
          <v-card style="height: 700px;"  v-if="!loading">
         <v-simple-table dense class="textTitle">
