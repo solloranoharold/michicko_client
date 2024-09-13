@@ -203,7 +203,9 @@ export default {
         },
         close() {
             this.editedObj = {}
-            this.historyObj={}
+            this.historyObj = {}
+            this.employee_id = ""
+            this.password=""
             this.$emit('closeDialog' , false )
         }
     },
