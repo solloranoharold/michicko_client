@@ -147,7 +147,10 @@ export default {
                 this.historyObj.previous_stock = this.editedObj.quantity 
                 this.historyObj.current_stock = 0
                 this.historyObj.organization_id = organization_id 
-                this.historyObj.total_price = this.editedObj.quantity * this.editedObj.srp 
+                this.historyObj.total_srp_price = this.editedObj.quantity * this.editedObj.srp 
+                this.historyObj.total_unit_price = this.editedObj.quantity * this.editedObj.price 
+                this.historyObj.srp = this.editedObj.srp 
+                this.historyObj.price = this.editedObj.price 
                 
                 this.editedObj.quantity = 0 
                  this.editedObj.updated_by = this.userInfo.employee_id
@@ -186,7 +189,10 @@ export default {
                         this.historyObj.previous_stock = this.editedObj.quantity 
                         this.editedObj.quantity = parseFloat(this.editedObj.quantity) + parseFloat(this.historyObj.added_quantity)
                         this.historyObj.current_stock = this.editedObj.quantity
-                        this.historyObj.total_price = this.editedObj.quantity * this.editedObj.srp
+                        this.historyObj.total_srp_price = this.editedObj.quantity * this.editedObj.srp 
+                        this.historyObj.total_unit_price = this.editedObj.quantity * this.editedObj.price
+                        this.historyObj.srp = this.editedObj.srp 
+                        this.historyObj.price = this.editedObj.price  
                     }
                 }
                 this.editedObj.updated_by = this.userInfo.employee_id
