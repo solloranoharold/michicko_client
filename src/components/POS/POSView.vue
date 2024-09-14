@@ -55,45 +55,55 @@
          <v-card  :class=" !isMobile ? 'floating-card textTitle' : ' textTitle'" >
             <v-card-text>
                 <div>
-                        <h2 class="text-center "> PAYMENT COMPUTATIONS</h2>
-                        <v-list dense>
-                            <v-list-item >
-                                <v-list-item-title> Service Total Amount</v-list-item-title>
-                                 <v-list-item-icon> ₱{{ totalAmountServices }}</v-list-item-icon>
-                            </v-list-item>
-                             <v-list-item v-for="( service , i ) in tableServiceCommissions" :key="i+'a'">
-                                <v-list-item-title> Employee Service Commission</v-list-item-title>
-                                 <v-list-item-icon> {{ service.commissions }}%</v-list-item-icon>
-                            </v-list-item>
-                          
-                            <v-list-item>
-                                <v-list-item-title> OTC Products Total Amount</v-list-item-title>
-                                 <v-list-item-icon> ₱{{ totalAmountOTC }}</v-list-item-icon>
-                            </v-list-item>
-                              <v-list-item v-for="( otc , i ) in tableOTCProductCommissions" :key="i+'b'">
-                                <v-list-item-title>  Employee OTC Product Commission</v-list-item-title>
-                                 <v-list-item-icon> {{ otc.commissions }}%</v-list-item-icon>
-                            </v-list-item>
+                    <v-expansion-panels accordion class="textTitle" flat>
+                        <v-expansion-panel>
+                        <v-expansion-panel-header>
+                             <h3 class="text-center "> PAYMENT COMPUTATIONS</h3>
+                         </v-expansion-panel-header>
+                          <v-expansion-panel-content>
+                                  <!-- <h2 class="text-center "> PAYMENT COMPUTATIONS</h2> -->
+                            <v-list dense>
+                                <v-list-item >
+                                    <v-list-item-title> Service Total Amount</v-list-item-title>
+                                    <v-list-item-icon> ₱{{ totalAmountServices }}</v-list-item-icon>
+                                </v-list-item>
+                                <!-- <v-list-item v-for="( service , i ) in tableServiceCommissions" :key="i+'a'">
+                                    <v-list-item-title> Employee Service Commission</v-list-item-title>
+                                    <v-list-item-icon> {{ service.commissions }}%</v-list-item-icon>
+                                </v-list-item> -->
                             
-                        </v-list>
-                        <v-list dense v-if="tableOtherFees.length > 0 && validateOtherFees ">
-                            <v-list-item-title>Other Fees</v-list-item-title>
-                            <v-list-item v-for="(item , i ) in tableOtherFees" :key="i">
-                                <v-list-item-title>{{ item.description }}</v-list-item-title>
-                                 <v-list-item-icon>₱{{ item.amount  }}{{ item.operation }}</v-list-item-icon>
-                            </v-list-item>
-                        </v-list>
-                         <v-list dense  v-if="Object.keys(selectedDiscount).length > 0 && selectedDiscount!=null ">
-                            <v-list-item-title>Discount</v-list-item-title>
-                            <v-list-item>
-                                <v-list-item-title>Discount( {{ selectedDiscount.description}} ) </v-list-item-title>
-                                 <v-list-item-icon> {{ selectedDiscount.percent  }}%</v-list-item-icon>
-                            </v-list-item>
-                             <v-list-item>
-                                <v-list-item-title>Original Total Amount </v-list-item-title>
-                                 <v-list-item-icon> ₱{{  totalAmount }}</v-list-item-icon>
-                            </v-list-item>
-                        </v-list>
+                                <v-list-item>
+                                    <v-list-item-title> OTC Products Total Amount</v-list-item-title>
+                                    <v-list-item-icon> ₱{{ totalAmountOTC }}</v-list-item-icon>
+                                </v-list-item>
+                                <!-- <v-list-item v-for="( otc , i ) in tableOTCProductCommissions" :key="i+'b'">
+                                    <v-list-item-title>  Employee OTC Product Commission</v-list-item-title>
+                                    <v-list-item-icon> {{ otc.commissions }}%</v-list-item-icon>
+                                </v-list-item> -->
+                                
+                            </v-list>
+                            <v-list dense v-if="tableOtherFees.length > 0 && validateOtherFees ">
+                                <v-list-item-title>Other Fees</v-list-item-title>
+                                <v-list-item v-for="(item , i ) in tableOtherFees" :key="i">
+                                    <v-list-item-title>{{ item.description }}</v-list-item-title>
+                                    <v-list-item-icon>₱{{ item.amount  }}{{ item.operation }}</v-list-item-icon>
+                                </v-list-item>
+                            </v-list>
+                            <v-list dense  v-if="Object.keys(selectedDiscount).length > 0 && selectedDiscount!=null ">
+                                <v-list-item-title>Discount</v-list-item-title>
+                                <v-list-item>
+                                    <v-list-item-title>Discount( {{ selectedDiscount.description}} ) </v-list-item-title>
+                                    <v-list-item-icon> {{ selectedDiscount.percent  }}%</v-list-item-icon>
+                                </v-list-item>
+                                <v-list-item>
+                                    <v-list-item-title>Original Total Amount </v-list-item-title>
+                                    <v-list-item-icon> ₱{{  totalAmount }}</v-list-item-icon>
+                                </v-list-item>
+                            </v-list>
+                            </v-expansion-panel-content>
+                            </v-expansion-panel>
+                        </v-expansion-panels>
+                      
                         <br/>
                         <tr> 
                             <strong>Total Amount to Pay :  <h1> ₱{{ Object.keys(selectedDiscount).length > 0  ? totalDiscountedAmount :totalAmount}}</h1> </strong>
@@ -367,24 +377,41 @@
             <v-card-text>
                 <br/>
                 <h2 class="text-center "> PAYMENT COMPUTATIONS</h2>
-                 <v-list dense>
-                            <v-list-item >
-                                <v-list-item-title> Service Total Amount</v-list-item-title>
-                                 <v-list-item-icon> ₱{{ totalAmountServices }}</v-list-item-icon>
+                 <v-list dense class="textTitle">
+                    <!-- <v-autocomplete v-model="transactionObj.client_id" :items="clients" item-value="client_id" item-text="fullname" append-icon="mdi-account"   color="#BCAAA4" label="Client Name" dense outlined clearable ></v-autocomplete> -->
+                        <v-list-item>
+                            <v-list-item-content>
+                                <v-list-item-title> {{ clientName }}</v-list-item-title>
+                                <v-list-item-subtitle>Client Name</v-list-item-subtitle>
+                            </v-list-item-content>
+                            
+                        </v-list-item>
+                        <v-list-title>Services</v-list-title>
+                            <v-list-item v-for="(item , i ) in tableServices" :key="i">
+                                <v-list-item-title> {{  item.service_name }}</v-list-item-title>
+                                <v-list-item-icon> ₱{{ parseFloat(item.price).toFixed(2) }}</v-list-item-icon>
                             </v-list-item>
-                             <v-list-item v-for="( service , i ) in tableServiceCommissions" :key="i+'a'">
+                            <v-list-item >
+                                <v-list-item-title> <strong>Total Amount</strong></v-list-item-title>
+                                 <v-list-item-icon> <strong>₱{{ totalAmountServices }}</strong></v-list-item-icon>
+                            </v-list-item>
+                             <!-- <v-list-item v-for="( service , i ) in tableServiceCommissions" :key="i+'a'">
                                 <v-list-item-title> Employee Service Commission</v-list-item-title>
                                  <v-list-item-icon> {{ service.commissions }}%</v-list-item-icon>
+                            </v-list-item> -->
+                            <v-list-title v-if="tableOTCProducts.length">OTC Products</v-list-title>
+                            <v-list-item v-for="(item , i ) in tableOTCProducts" :key="i" >
+                                <v-list-item-title> {{  item.product_name }}</v-list-item-title>
+                                <v-list-item-icon> ₱{{ parseFloat(item.srp).toFixed(2) }}</v-list-item-icon>
                             </v-list-item>
-                          
                             <v-list-item v-if="tableOTCProducts.length">
-                                <v-list-item-title> OTC Products Total Amount</v-list-item-title>
-                                 <v-list-item-icon> ₱{{ totalAmountOTC }}</v-list-item-icon>
+                                <v-list-item-title> <strong>Total Amount</strong></v-list-item-title>
+                                 <v-list-item-icon><strong> ₱{{ totalAmountOTC }}</strong></v-list-item-icon>
                             </v-list-item>
-                              <v-list-item v-for="( otc , i ) in tableOTCProductCommissions" :key="i+'b'">
+                              <!-- <v-list-item v-for="( otc , i ) in tableOTCProductCommissions" :key="i+'b'">
                                 <v-list-item-title>  Employee OTC Product Commission</v-list-item-title>
                                  <v-list-item-icon> {{ otc.commissions }}%</v-list-item-icon>
-                            </v-list-item>
+                            </v-list-item> -->
                             
                         </v-list>
                         <v-list dense v-if="tableOtherFees.length > 0 && validateOtherFees ">
@@ -455,6 +482,7 @@ import { io } from "socket.io-client";
 
 
 import moment from 'moment'
+import _ from 'lodash'
 export default {
     components:{LoaderView , OTCProductsDialogVue},
     data: () => ({
@@ -597,7 +625,11 @@ export default {
             })  
             return hasBlank
         },
-        
+         clientName() {
+            let i = this.clients.findIndex(x => x.client_id == this.transactionObj.client_id)
+             if (i > -1) return this.clients[i].fullname
+            return ''
+        },
     },
     async created() {
         this.handleResize()
@@ -725,7 +757,7 @@ export default {
              let organization_id = this.$route?.params?.organization_id ? this.$route.params.organization_id: this.userInfo.organization_id
             await this.classService.loadAllServices(organization_id).then((data) => { 
                 data.forEach( item=> item.additional = 0)
-                this.services =  data
+                this.services =  _.orderBy(data ,['service_name'],['asc'])
                 console.log(this.services, 'loadAllServices')
                 this.loading = false 
             })
@@ -984,17 +1016,17 @@ export default {
                     });
                 return false 
             }
-            if (this.transactionObj.payment_method == 'cashless' && !this.transactionObj.referrence_no) {
-                 Swal.fire({
-                        icon: "error",
-                        title: "Please input referrence no!",
-                         showConfirmButton: false,
-                         toast: true, 
-                        position: 'bottom-end',
-                        timer:3000,
-                    });
-                return false 
-            }
+            // if (this.transactionObj.payment_method == 'cashless' && !this.transactionObj.referrence_no) {
+            //      Swal.fire({
+            //             icon: "error",
+            //             title: "Please input referrence no!",
+            //              showConfirmButton: false,
+            //              toast: true, 
+            //             position: 'bottom-end',
+            //             timer:3000,
+            //         });
+            //     return false 
+            // }
             
              if (this.transactionObj.payment_method !== 'cashless') {
                 this.transactionObj.referrence_no = null

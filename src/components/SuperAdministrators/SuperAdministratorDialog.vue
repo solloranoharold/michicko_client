@@ -35,7 +35,7 @@
                     <v-text-field  required prepend-inner-icon="mdi-map-marker" placeholder="Barangay " v-model="editedObj.brgy"></v-text-field>
                     <v-layout>
                         <v-text-field  required prepend-inner-icon="mdi-map-marker" placeholder="Municipality " v-model="editedObj.municipality"></v-text-field>
-                        <v-text-field type="number"  required prepend-inner-icon="mdi-map-marker" placeholder="Zip Code " v-model="editedObj.zip_code"></v-text-field>
+                        <v-text-field type="text"  required prepend-inner-icon="mdi-map-marker" placeholder="Province" v-model="editedObj.province"></v-text-field>
                     </v-layout>
                 </v-form>
                     <v-card-actions class="justify-end">

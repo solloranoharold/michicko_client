@@ -20,6 +20,8 @@
                     lazy-validation 
                     class="textTitle"
                 >
+                     <h4 class="text-center">Personal Information</h4>
+                     <v-divider style="border:1px solid;"/>
                     <!-- {{  editedObj }} -->
                      <!-- <v-autocomplete :rules="nameRules" auto-select-first item-value="organization_id" item-text="organization_name"  required prepend-inner-icon="mdi-domain" placeholder="Organization"  :items="organizations" v-model="editedObj.organization_id"></v-autocomplete> -->
                     <v-text-field :rules="nameRules" required prepend-inner-icon="mdi-account" placeholder="Last Name" v-model="editedObj.last_name"></v-text-field>
@@ -40,8 +42,15 @@
                     <v-text-field  required prepend-inner-icon="mdi-map-marker" placeholder="Barangay " v-model="editedObj.brgy"></v-text-field>
                     <v-layout>
                         <v-text-field  required prepend-inner-icon="mdi-map-marker" placeholder="Municipality " v-model="editedObj.municipality"></v-text-field>
-                        <v-text-field type="number"  required prepend-inner-icon="mdi-map-marker" placeholder="Zip Code " v-model="editedObj.zip_code"></v-text-field>
+                        <v-text-field type="text"  required prepend-inner-icon="mdi-map-marker" placeholder="Province " v-model="editedObj.province"></v-text-field>
                     </v-layout>
+                    <br/>
+                        <h4 class="text-center">Government Details</h4>
+                        <v-divider style="border:1px solid;"/>
+                        <v-text-field type="text"   prepend-inner-icon="mdi-bank" label="SSS Number" placeholder="SSS Number " v-model="editedObj.sss"></v-text-field>
+                        <v-text-field type="text"   prepend-inner-icon="mdi-bank" label="Pag-Ibig MID No." placeholder="Pag-Ibig MID No." v-model="editedObj.pag_ibig"></v-text-field>
+                        <v-text-field type="text"   prepend-inner-icon="mdi-bank" label="TIN" placeholder="TIN" v-model="editedObj.tin"></v-text-field>
+                    
                     
                 </v-form>
                     <v-card-actions class="justify-end">

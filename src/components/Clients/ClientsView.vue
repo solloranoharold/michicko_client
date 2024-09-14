@@ -25,9 +25,9 @@
                      <th>Client ID </th>
                     <th>Client Name </th>
                     <th>Contact No</th>
-                    <th>Email</th>
-                    <th>Address</th>
-                    <th>Actions</th>
+                    <th  v-if="userInfo.position_id!=3">Email</th>
+                    <th  v-if="userInfo.position_id!=3">Address</th>
+                    <th  v-if="userInfo.position_id!=3">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -35,9 +35,9 @@
                     <td>{{ item.client_id }}</td>
                     <td> {{ item.last_name }} {{ item.first_name }}</td>
                     <td>{{ item.contact_no }}</td>
-                    <td>{{  item.client_email }}</td>
-                    <td>{{ item.client_address }}</td>
-                    <td>
+                    <td  v-if="userInfo.position_id!=3">{{  item.client_email }}</td>
+                    <td  v-if="userInfo.position_id!=3">{{ item.client_address }}</td>
+                    <td >
                         <v-tooltip bottom >
                             <template v-slot:activator="{ on, attrs }">
                                 <v-icon color="green" @click="openClientServiceDialog(item )"  v-bind="attrs"
