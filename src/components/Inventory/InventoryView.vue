@@ -34,9 +34,7 @@
                         <label style="font-size: 11px;">Legends :  <v-chip x-small color="#B0BEC5" text-color="white" > Not enough quantity </v-chip><v-chip x-small color="black" outlined text-color="black">Enough Quantity </v-chip></label>
                     </v-toolbar>
                 </template>
-                <template
-                    v-slot:body="{ items }"
-                >
+                <template v-slot:body="{ items }">
                     <tbody>
                    <tr v-for="(item , i) in items" :key="i" :style="{'background-color': item.quantity <= item.minimum_qty ? '#B0BEC5' : 'transparent' }">
                     <td>{{ item.inventory_id }}</td>
