@@ -144,7 +144,9 @@
                         
                         
                     </v-card-actions> -->
-                    <v-btn @click="saveAsDraft()"  block :disabled="!this.transactionObj.client_id || !this.tableServices.length || !this.tableServicesProduct.length"   dark color="#BCAAA4"  x-large> <v-icon large>mdi-file</v-icon>save as draft</v-btn>
+                    <v-btn  @click="totalDialog = !totalDialog , showInvoice = !showInvoice" block  dark color="#BCAAA4"  x-large> <v-icon large>mdi-invoice</v-icon>INVOICE</v-btn>
+                    <br/>
+                    <v-btn @click="saveAsDraft()"  block :disabled="!this.transactionObj.client_id || !this.tableServices.length || !this.tableServicesProduct.length "   dark color="#BCAAA4"  x-large> <v-icon large>mdi-file</v-icon>save as draft</v-btn>
                     <br/>
                     <v-btn @click="submitPOSData()" :disabled="!this.transactionObj.client_id || !this.tableServices.length || !this.tableServicesProduct.length" dark color="#BCAAA4"  block x-large> <v-icon large>mdi-database-settings</v-icon>Submit Transaction</v-btn>
                     
@@ -451,8 +453,8 @@
             </v-card-text>
             <v-card-actions>
                 <v-spacer/>
-                    <v-btn small dark color="success" @click="submitPOSDialogData()">Submit</v-btn>
-                     <v-btn small dark color="red" @click="totalDialog = !totalDialog">Close</v-btn>
+                    <v-btn :disabled="showInvoice" small dark color="success" @click="submitPOSDialogData()">Submit</v-btn>
+                     <v-btn small dark color="red" @click="totalDialog = !totalDialog , showInvoice = false ">Close</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -486,6 +488,7 @@ import _ from 'lodash'
 export default {
     components:{LoaderView , OTCProductsDialogVue},
     data: () => ({
+        showInvoice:false, 
         switchOtc:false, 
         socket: null,
         totalDialog:false , 

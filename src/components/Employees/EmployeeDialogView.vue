@@ -50,7 +50,7 @@
                         <v-text-field type="text"   prepend-inner-icon="mdi-bank" label="SSS Number" placeholder="SSS Number " v-model="editedObj.sss"></v-text-field>
                         <v-text-field type="text"   prepend-inner-icon="mdi-bank" label="Pag-Ibig MID No." placeholder="Pag-Ibig MID No." v-model="editedObj.pag_ibig"></v-text-field>
                         <v-text-field type="text"   prepend-inner-icon="mdi-bank" label="TIN" placeholder="TIN" v-model="editedObj.tin"></v-text-field>
-                    
+                        <v-text-field type="text"   prepend-inner-icon="mdi-bank" label="Philhealth" placeholder="Philhealth" v-model="editedObj.philhealth"></v-text-field>
                     
                 </v-form>
                     <v-card-actions class="justify-end">

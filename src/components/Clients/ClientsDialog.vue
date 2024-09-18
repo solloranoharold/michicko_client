@@ -26,8 +26,8 @@
                     <v-text-field :rules="nameRules" required prepend-inner-icon="mdi-account" label="Last Name" placeholder="Last Name" v-model="editedObj.last_name"></v-text-field> 
                     <v-text-field :rules="nameRules" required prepend-inner-icon="mdi-account" label="First Name" placeholder="First Name" v-model="editedObj.first_name"></v-text-field> 
                     <v-text-field :rules="nameRules" type="number" min="1" required prepend-inner-icon="mdi-phone" label="Contact No" placeholder="Contact No" v-model="editedObj.contact_no"></v-text-field> 
-                    <v-text-field v-if="userInfo.position_id!=3"  prepend-inner-icon="mdi-email" label="Email (optional)" placeholder="Email(optional)"  v-model="editedObj.client_email"></v-text-field>
-                    <v-textarea  v-if="userInfo.position_id!=3" prepend-inner-icon="mdi-map-marker" label="Address (optional)" placeholder="Address(optional)" v-model="editedObj.client_address"></v-textarea>
+                    <v-text-field   prepend-inner-icon="mdi-email" label="Email (optional)" placeholder="Email(optional)"  v-model="editedObj.client_email"></v-text-field>
+                    <v-textarea   prepend-inner-icon="mdi-map-marker" label="Address (optional)" placeholder="Address(optional)" v-model="editedObj.client_address"></v-textarea>
                 </v-form>
                     <v-card-actions class="justify-end">
                         <v-btn :disabled="!valid"
