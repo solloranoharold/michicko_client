@@ -49,7 +49,7 @@
                     </td>
                     <td align="center"> 
                         <v-chip small color="indigo" text-color="white">
-                           ₱{{ parseFloat(item.price).toFixed(2) }} 
+                           ₱{{ parseFloat(item.total_price).toFixed(2) }} 
                         </v-chip> 
                     </td>
                     <!-- <td>{{ item.date_created }}</td> -->
