@@ -53,13 +53,14 @@
                         <td>
                             <v-tooltip bottom >
                                 <template v-slot:activator="{ on, attrs }">
-                                    <v-icon color="blue" @click="addUpdateProduct(item )"  v-bind="attrs"
+                                    <v-icon color="blue" @click="addUpdateProduct(item ,false )"  v-bind="attrs"
                                     v-on="on">
                                     mdi-pencil-outline
                                     </v-icon>
                                 </template>
                                 <span>Edit Record</span>
                             </v-tooltip>
+                            
                         </td>
                     </tr>
                 </tbody>
@@ -142,6 +143,7 @@
 <script>
 import ProductDialogVue from './ProductDialog.vue'
 import Inventory from '@/class/products';
+import moment from 'moment'
 export default { 
     components:{ProductDialogVue},
     data: () => ({
@@ -188,9 +190,10 @@ export default {
        },
     },  
     methods: { 
-        addUpdateProduct( item = {}) {
+        addUpdateProduct(item = {}, isDelete = false ) {
             console.log(item)
-            if(item.date_created) delete item.date_created
+            if (item.date_created) delete item.date_created
+            if(isDelete) item.deleted_date = moment().format('YYYY-MM-DD HH:mm:ss')
             this.getObj = item
             this.dialog=!this.dialog
         },

@@ -44,7 +44,7 @@
                     <td>
                          <v-tooltip bottom >
                             <template v-slot:activator="{ on, attrs }">
-                                <v-icon color="blue" @click="addUpdateServices(item )"  v-bind="attrs"
+                                <v-icon color="blue" @click="addUpdateServices(item ,false  )"  v-bind="attrs"
                                 v-on="on">
                                 mdi-pencil-outline
                                 </v-icon>
@@ -53,13 +53,22 @@
                         </v-tooltip>
                          <v-tooltip bottom >
                             <template v-slot:activator="{ on, attrs }">
-                                <v-icon color="indigo" @click="addUpdateStatus(item )"  v-bind="attrs"
+                                <v-icon color="indigo" @click="addUpdateStatus(item ,false  )"  v-bind="attrs"
                                 v-on="on">
                                 mdi-alert-outline
                                 </v-icon>
                             </template>
                             <span>Activate/Deactivate</span>
                         </v-tooltip>
+                         <v-tooltip bottom >
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-icon color="red" @click="addUpdateStatus(item , true)"  v-bind="attrs"
+                                    v-on="on">
+                                    mdi-delete-empty-outline
+                                    </v-icon>
+                                </template>
+                                <span>Delete Record</span>
+                            </v-tooltip>
                     </td>
                 </tr>
             </tbody>
@@ -86,6 +95,7 @@ import Organizations from '@/class/organizations';
 import Services from '@/class/services';
 import ServicesDialogVue from './ServicesDialog.vue';
 import LoaderView from '@/views/LoaderView.vue';
+import moment from 'moment'
 export default {
     components:{ ServicesDialogVue , LoaderView },
     data: () => ({
@@ -183,7 +193,8 @@ export default {
             console.log(this.totalCountService , 'this.totalCountService')
             this.loading=false
         },
-       async addUpdateStatus( item={} ) {
+        async addUpdateStatus(item = {}, isDelete = false) {
+            console.log(isDelete)
              let obj = {
                 service_id: item.service_id,
                 organization_id: item.organization_id ,
@@ -191,8 +202,11 @@ export default {
                 service_name: item.service_name,
                 price: item.price,
                 commissions: item.commissions,
-                status : item.service_status== 1 ? 0 : 1 
+                // status: item.service_status == 1 ? 0 : 1 ,
+                // deleted_date : isDelete ? moment().format('YYYY-MM-DD HH:mm:ss') : null
             }
+            if (isDelete) obj.deleted_date = moment().format('YYYY-MM-DD HH:mm:ss') 
+            else obj.status = item.service_status == 1 ? 0 : 1 
            await this.classService.addUpdateService(obj)
             await this.searchServices()
         },
