@@ -3,6 +3,7 @@
             <v-toolbar flat  dense>
                 <v-toolbar-title class="toolbarTitle"><v-icon>mdi-monitor</v-icon> Products <v-chip v-if="userInfo.position_id==0 || userInfo.position_id==1">{{ $route.params.organization_name}}</v-chip></v-toolbar-title>
                 <v-spacer/>
+                  <v-btn class="textTitle" @click="loadDeletedProducts()" rounded dark color="#BCAAA4"><v-icon>mdi-delete-empty-outline</v-icon>Deleted Products</v-btn>
                 <v-btn class="textTitle" @click="addUpdateProduct()" rounded dark color="#BCAAA4"><v-icon>mdi-bottle-soda-classic-outline</v-icon>Add Product</v-btn>
             </v-toolbar>
              <v-card style="height: 700px;"  v-if="!loading">
@@ -60,7 +61,15 @@
                                 </template>
                                 <span>Edit Record</span>
                             </v-tooltip>
-                            
+                            <v-tooltip bottom >
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-icon color="red" @click="updateDelete(item , true   )"  v-bind="attrs"
+                                    v-on="on">
+                                    mdi-delete-empty-outline
+                                    </v-icon>
+                                </template>
+                                <span>Delete Record</span>
+                            </v-tooltip>
                         </td>
                     </tr>
                 </tbody>
@@ -137,13 +146,54 @@
                 ></v-pagination>
             </div>
             <product-dialog-vue :dialog="dialog" :saveDataObj="getObj" @closeDialog="closeDialog"/>
+
+            <v-dialog v-model="deletedDialog" persistent max-width="500">
+        <v-card class="textTitle">
+            <v-toolbar flat dense   class="toolbarTitle"
+               color="#BCAAA4"
+              dark>
+                <v-toolbar-title >Deleted Products</v-toolbar-title>
+                <v-spacer/>
+                <v-icon @click="deletedDialog= !deletedDialog">mdi-close</v-icon>
+            </v-toolbar>
+            <v-card-text>
+                <v-simple-table class="table-container textTitle" color="#BCAAA4">
+                     <thead>
+                        <tr>
+                            <th>Product ID </th>
+                            <th>Product Name</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(item , i) in deletedProducts" :key="i" >
+                            <td>{{ item.product_id }}</td>
+                            <td>{{ item.product_name }}</td>
+                            <td>
+                                 <v-tooltip bottom >
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-icon color="red" @click="updateDelete(item , false   )"  v-bind="attrs"
+                                    v-on="on">
+                                    mdi-delete-empty-outline
+                                    </v-icon>
+                                </template>
+                                <span>Delete Record</span>
+                            </v-tooltip>
+                            </td>
+                        </tr>
+                    </tbody>
+                </v-simple-table>
+
+            </v-card-text>
+        </v-card>
+       </v-dialog>
     </v-container>
 </template>
 
 <script>
 import ProductDialogVue from './ProductDialog.vue'
 import Inventory from '@/class/products';
-// import moment from 'moment'
+import moment from 'moment'
 export default { 
     components:{ProductDialogVue},
     data: () => ({
@@ -166,7 +216,9 @@ export default {
             { text:'Quantity',value:'quantity'},
             { text: 'Quantity Alert', value: 'minimum_qty' },
             { text: 'Actions', value: 'actions' },
-        ]
+        ],
+        deletedProducts: [],
+         deletedDialog: false,
     }),
      watch: {
         page(val) {
@@ -190,11 +242,26 @@ export default {
        },
     },  
     methods: { 
+        async loadDeletedProducts() {
+            this.deletedDialog = !this.deletedDialog
+            let organization_id =this.$route?.params?.organization_id ?this.$route.params.organization_id: this.userInfo.organization_id
+            await this.classInventory.loadDeletedProducts(organization_id).then(data => { 
+                this.deletedProducts = data 
+            })
+
+        },
         addUpdateProduct(item = {}) {
             console.log(item)
             if (item.date_created) delete item.date_created
             this.getObj = item
             this.dialog=!this.dialog
+        },
+        async updateDelete(item , isDelete ) {
+            console.log(item, isDelete)
+            item.delete_date = isDelete ? moment().format('YYYY-MM-DD HH:mm:ss') : null 
+            await this.classInventory.addUpdateProduct(item)
+            await this.evaluteProducts()
+            await this.loadDeletedProducts()
         },
          async searchProducts() {
              if (!this.search) {

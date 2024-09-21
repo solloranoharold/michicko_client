@@ -9,6 +9,10 @@ export default class Inventory{
          let a = await axios.postRequest(`inventory/productHistoryCreate`, data)
          return await a 
     }
+    async loadDeletedInventory( organization_id) {
+        let a = await axios.getRequest(`inventory/loadDeletedInventory/${organization_id}`)
+            return await a 
+    }
     async addUpdateProduct(data) {
         console.log(data , 'addUpdateCLient')
         const { method } = data 

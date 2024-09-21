@@ -3,6 +3,7 @@
             <v-toolbar flat  dense>
                 <v-toolbar-title class="toolbarTitle"><v-icon>mdi-monitor</v-icon> Inventory  <v-chip v-if="userInfo.position_id==0 || userInfo.position_id==1">{{ $route.params.organization_name}}</v-chip><v-chip v-if="userInfo.position_id==0">{{ $route.params.organization_name}}</v-chip></v-toolbar-title>
                 <v-spacer/>
+                 <v-btn class="textTitle" @click="loadDeletedInventory()" rounded dark color="#BCAAA4"><v-icon>mdi-delete-empty-outline</v-icon>Deleted Products</v-btn>
                 <v-btn class="textTitle" @click="addUpdateInventory()" rounded dark color="#BCAAA4"><v-icon>mdi-bottle-soda-classic-outline</v-icon>Add Product</v-btn>
             </v-toolbar>
              <v-card style="height: 700px;"  v-if="!loading">
@@ -57,22 +58,22 @@
                     <td>
                          <v-tooltip bottom >
                             <template v-slot:activator="{ on, attrs }">
-                                <v-icon color="blue" @click="addUpdateInventory(item ,false )"  v-bind="attrs"
+                                <v-icon color="blue" @click="addUpdateInventory(item )"  v-bind="attrs"
                                 v-on="on">
                                 mdi-pencil-outline
                                 </v-icon>
                             </template>
                             <span>Edit Record</span>
                         </v-tooltip>
-                        <!-- <v-tooltip bottom >
+                        <v-tooltip bottom >
                             <template v-slot:activator="{ on, attrs }">
-                                <v-icon color="red" @click="addUpdateInventory(item , true )"  v-bind="attrs"
+                                <v-icon color="red" @click="updateDelete(item , true )"  v-bind="attrs"
                                 v-on="on">
                                 mdi-delete-empty-outline
                                 </v-icon>
                             </template>
-                            <span>Edit Record</span>
-                        </v-tooltip> -->
+                            <span>Delete Record</span>
+                        </v-tooltip>
                     </td>
                 </tr>
                     </tbody>
@@ -146,6 +147,47 @@
                 ></v-pagination>
             </div>
             <inventory-dialog-vue :dialog="dialog" :saveDataObj="getObj" @closeDialog="closeDialog"/>
+    
+             <v-dialog v-model="deletedDialog" persistent max-width="500">
+        <v-card class="textTitle">
+            <v-toolbar flat dense   class="toolbarTitle"
+               color="#BCAAA4"
+              dark>
+                <v-toolbar-title >Deleted Products</v-toolbar-title>
+                <v-spacer/>
+                <v-icon @click="deletedDialog= !deletedDialog">mdi-close</v-icon>
+            </v-toolbar>
+            <v-card-text>
+                <v-simple-table class="table-container textTitle" color="#BCAAA4">
+                     <thead>
+                        <tr>
+                            <th>Product ID </th>
+                            <th>Product Name</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(item , i) in deletedInventory" :key="i" >
+                            <td>{{ item.inventory_id }}</td>
+                            <td>{{ item.product_name }}</td>
+                            <td>
+                                 <v-tooltip bottom >
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-icon color="red" @click="updateDelete(item , false   )"  v-bind="attrs"
+                                    v-on="on">
+                                    mdi-delete-empty-outline
+                                    </v-icon>
+                                </template>
+                                <span>Delete Record</span>
+                            </v-tooltip>
+                            </td>
+                        </tr>
+                    </tbody>
+                </v-simple-table>
+
+            </v-card-text>
+        </v-card>
+       </v-dialog>
     </v-container>
 </template>
 
@@ -174,11 +216,13 @@ export default {
             { text: 'Quantity Alert', value: 'minimum_qty', align: 'center' },
             { text: 'Net Value', value: 'net_value', align: 'center' },
             { text: 'Total Value', value: 'total_value', align: 'center' },
-             { text: 'Total Price', value: 'total_price', align: 'center' },
+            { text: 'Total Price', value: 'total_price', align: 'center' },
             { text: 'Date Updated', value: 'updated_date', align: 'center' },
-             { text: 'Actions', value: 'actions', align: 'center' },
+            { text: 'Actions', value: 'actions', align: 'center' },
             
-        ]
+        ],
+        deletedInventory: [],
+        deletedDialog:false 
     }),
      watch: {
         page(val) {
@@ -202,13 +246,27 @@ export default {
        },
     },  
     methods: { 
-        addUpdateInventory( item = {} , isDelete = false ) {
+        async loadDeletedInventory() {
+            this.deletedDialog = !this.deletedDialog
+            let organization_id =this.$route?.params?.organization_id ?this.$route.params.organization_id: this.userInfo.organization_id
+            await this.classInventory.loadDeletedInventory(organization_id).then(data => {
+                this.deletedInventory = data 
+                console.log(this.deletedInventory , 'loadDeletedInventory')
+            })
+        },
+        addUpdateInventory( item = {} ) {
             console.log(item)
             if (item.date_created) delete item.date_created
-            item.deleted_date = isDelete ?  moment().format('YYYY-MM-DD HH:mm:ss') : null
         
             this.getObj = item
             this.dialog=!this.dialog
+        },
+        async updateDelete(item, isDelete = false) {
+            item.deleted_date = isDelete ? moment().format('YYYY-MM-DD HH:mm:ss') : null
+            await this.classInventory.addUpdateProduct(item)
+            await this.searchProducts()
+            await this.loadDeletedInventory()
+            
         },
          async searchProducts() {
              if (!this.search) {

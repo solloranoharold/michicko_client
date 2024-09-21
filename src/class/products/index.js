@@ -7,6 +7,10 @@ export default class Product{
          let a = await axios.postRequest(`products/productHistoryCreate`, data)
          return await a 
     }
+    async loadDeletedProducts(organization_id) {
+        let a = await axios.getRequest(`products/loadDeletedProducts/${organization_id}`)
+        return await a 
+    }
     async addUpdateProduct(data) {
         console.log(data , 'addUpdateCLient')
         const { method } = data 

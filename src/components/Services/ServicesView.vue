@@ -90,10 +90,12 @@
        <services-dialog-vue :dialog="dialog" :saveDataObj="getObj" @closeDialog="closeDialog"/>
 
 
-       <v-dialog v-model="deletedDialog" persistent max-width="500">
+       <v-dialog v-model="deletedDialog" persistent max-width="500" >
         <v-card class="textTitle">
-            <v-toolbar flat dense>
-                <v-toolbar flat dense>Deleted Services</v-toolbar>
+            <v-toolbar flat dense   class="toolbarTitle"
+               color="#BCAAA4"
+              dark>
+                <v-toolbar-title flat dense>Deleted Services</v-toolbar-title>
                 <v-spacer/>
                 <v-icon @click="deletedDialog= !deletedDialog">mdi-close</v-icon>
             </v-toolbar>
