@@ -3,6 +3,7 @@
          <v-toolbar flat dense>
             <v-toolbar-title class="toolbarTitle"><v-icon>mdi-content-cut</v-icon> Services <v-chip v-if="userInfo.position_id==0">{{ $route.params.organization_name}}</v-chip></v-toolbar-title>
             <v-spacer/>
+             <v-btn class="textTitle" @click="loadDeletedServices()"  rounded dark color="#BCAAA4"><v-icon>mdi-delete-empty-outline</v-icon>Deleted Services</v-btn>
             <v-btn class="textTitle" @click="addUpdateServices()"  rounded dark color="#BCAAA4"><v-icon>mdi-content-cut</v-icon>Add Service</v-btn>
         </v-toolbar>
          <v-card style="height: 700px;"  v-if="!loading">
@@ -44,7 +45,7 @@
                     <td>
                          <v-tooltip bottom >
                             <template v-slot:activator="{ on, attrs }">
-                                <v-icon color="blue" @click="addUpdateServices(item ,false  )"  v-bind="attrs"
+                                <v-icon color="blue" @click="addUpdateServices(item   )"  v-bind="attrs"
                                 v-on="on">
                                 mdi-pencil-outline
                                 </v-icon>
@@ -53,7 +54,7 @@
                         </v-tooltip>
                          <v-tooltip bottom >
                             <template v-slot:activator="{ on, attrs }">
-                                <v-icon color="indigo" @click="addUpdateStatus(item ,false  )"  v-bind="attrs"
+                                <v-icon color="indigo" @click="addUpdateStatus(item   )"  v-bind="attrs"
                                 v-on="on">
                                 mdi-alert-outline
                                 </v-icon>
@@ -62,7 +63,7 @@
                         </v-tooltip>
                          <v-tooltip bottom >
                                 <template v-slot:activator="{ on, attrs }">
-                                    <v-icon color="red" @click="addUpdateStatus(item , true)"  v-bind="attrs"
+                                    <v-icon color="red" @click="updateDelete(item , true) "  v-bind="attrs"
                                     v-on="on">
                                     mdi-delete-empty-outline
                                     </v-icon>
@@ -87,6 +88,53 @@
         </div>
          <LoaderView  v-else/>
        <services-dialog-vue :dialog="dialog" :saveDataObj="getObj" @closeDialog="closeDialog"/>
+
+
+       <v-dialog v-model="deletedDialog" persistent max-width="500">
+        <v-card class="textTitle">
+            <v-toolbar flat dense>
+                <v-toolbar flat dense>Deleted Services</v-toolbar>
+                <v-spacer/>
+                <v-icon @click="deletedDialog= !deletedDialog">mdi-close</v-icon>
+            </v-toolbar>
+            <v-card-text>
+                <v-simple-table class="table-container textTitle" color="#BCAAA4">
+                     <thead>
+                        <tr>
+                            <th>Category </th>
+                            <th>Service Name</th>
+                            <th>Price</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(item , i) in deletedServices" :key="i" >
+                             <td>
+                        <v-chip outlined small color="black">
+                            {{ item.category_name }}
+                        </v-chip>
+                    </td>
+                    <td>{{ item.service_name }}</td>
+                    <td>
+                       ₱{{ parseFloat(item.price).toFixed(2) }}
+                    </td>
+                    <td>
+                         <v-tooltip bottom >
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-icon color="blue" @click="updateDelete(item , false), deletedDialog = !deletedDialog"  v-bind="attrs"
+                                    v-on="on">
+                                    mdi-battery-sync                                    </v-icon>
+                                </template>
+                                <span>Retrieve Record</span>
+                            </v-tooltip>
+                    </td>
+                        </tr>
+                    </tbody>
+                </v-simple-table>
+
+            </v-card-text>
+        </v-card>
+       </v-dialog>
     </v-container>
    
 </template>
@@ -116,7 +164,9 @@ export default {
             { text: "Services ", value: 'organization_name' },
             { text: 'Address', value: 'address' },
              { text:'Contact #' , value:'org_contact_no'}
-        ]
+        ],
+        deletedDialog: false,
+        deletedServices:[]
     }),
     async created() {
         if (this.userInfo.position_id == 0 && !this.$route.params.organization_id) {
@@ -139,9 +189,18 @@ export default {
     computed: {
        totalPages(){
             return  Math.ceil(this.totalCountService / this.itemsPerPage);
-       },  
+        },  
+       
     },
     methods: { 
+        async loadDeletedServices() {
+            this.deletedDialog = !this.deletedDialog
+            let organization_id = this.$route?.params?.organization_id ? this.$route.params.organization_id : this.userInfo.organization_id
+            await this.classService.loadDeletedServices(organization_id).then(data => { 
+                console.log(data, 'loadDeletedServices')
+                this.deletedServices=data 
+            })
+        },
         async loadOrganizations() { 
             this.organizations = await this.classOrg.readOrganizations()
         },
@@ -193,8 +252,7 @@ export default {
             console.log(this.totalCountService , 'this.totalCountService')
             this.loading=false
         },
-        async addUpdateStatus(item = {}, isDelete = false) {
-            console.log(isDelete)
+        async addUpdateStatus(item = {}) {
              let obj = {
                 service_id: item.service_id,
                 organization_id: item.organization_id ,
@@ -202,13 +260,26 @@ export default {
                 service_name: item.service_name,
                 price: item.price,
                 commissions: item.commissions,
-                // status: item.service_status == 1 ? 0 : 1 ,
-                // deleted_date : isDelete ? moment().format('YYYY-MM-DD HH:mm:ss') : null
+                status: item.service_status == 1 ? 0 : 1 ,
             }
-            if (isDelete) obj.deleted_date = moment().format('YYYY-MM-DD HH:mm:ss') 
-            else obj.status = item.service_status == 1 ? 0 : 1 
+        
            await this.classService.addUpdateService(obj)
             await this.searchServices()
+        },
+       async updateDelete(item , isDelete= false ) {
+            let obj = {
+                service_id: item.service_id,
+                organization_id: item.organization_id ,
+                category_id: item.category_id,
+                service_name: item.service_name,
+                price: item.price,
+                commissions: item.commissions,
+                deleted_date : isDelete ? moment().format('YYYY-MM-DD HH:mm:ss') : null
+            }
+            await this.classService.addUpdateService(obj)
+           await this.searchServices()
+            
+            
         },
         addUpdateServices(item={}) {
            let obj = {

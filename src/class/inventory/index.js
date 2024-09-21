@@ -73,6 +73,7 @@ export default class Inventory{
         let a = await axios.getRequest(`inventory/loadAllInvetory/${organization_id}`)
     return await a
     }
+   
 }
 async function addUpdateProducts(data) {
     let a = await axios.postRequest(`inventory/addUpdateProduct`, data)

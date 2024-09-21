@@ -67,6 +67,10 @@ export default class Services{
         let a = await axios.getRequest(`services/loadAllServices/${organization_id}`)
             return await a
     }
+     async loadDeletedServices( organization_id ) {
+        let a = await axios.getRequest(`services/loadDeletedServices/${organization_id}`)
+        return await a
+    }
 }
 async function addUpdateService(data) {
     let a = await axios.postRequest(`services/addUpdateService`, data)
