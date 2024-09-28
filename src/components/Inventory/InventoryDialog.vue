@@ -113,7 +113,8 @@ export default {
                 this.loadOrganizations()
             }
         },
-         saveDataObj(val){
+        saveDataObj(val) {
+             let organization_id = this.$route?.params?.organization_id ? this.$route.params.organization_id: this.userInfo.organization_id
             if(Object.keys(val).length !== 0 ) {
                 this.editedObj = JSON.parse(JSON.stringify(val))
                 this.editedObj.method = 1 
@@ -125,6 +126,7 @@ export default {
             }else{
                 this.editedObj.method = 0
             }
+            this.editedObj.organization_id = organization_id
             console.log('saveDataObj' , this.editedObj )
         },
     },

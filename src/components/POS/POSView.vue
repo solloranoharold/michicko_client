@@ -146,9 +146,9 @@
                     </v-card-actions> -->
                     <v-btn  @click="totalDialog = !totalDialog , showInvoice = !showInvoice" block  dark color="#BCAAA4"  x-large> <v-icon large>mdi-invoice</v-icon>INVOICE</v-btn>
                     <br/>
-                    <v-btn @click="saveAsDraft()"  block :disabled="!this.transactionObj.client_id || !this.tableServices.length || !this.tableServicesProduct.length "   dark color="#BCAAA4"  x-large> <v-icon large>mdi-file</v-icon>save as draft</v-btn>
+                    <v-btn @click="saveAsDraft()"  block :disabled="!this.transactionObj.client_id || !this.tableServices.length  "   dark color="#BCAAA4"  x-large> <v-icon large>mdi-file</v-icon>save as draft</v-btn>
                     <br/>
-                    <v-btn @click="submitPOSData()" :disabled="!this.transactionObj.client_id || !this.tableServices.length || !this.tableServicesProduct.length" dark color="#BCAAA4"  block x-large> <v-icon large>mdi-database-settings</v-icon>Submit Transaction</v-btn>
+                    <v-btn @click="submitPOSData()" :disabled="!this.transactionObj.client_id || !this.tableServices.length " dark color="#BCAAA4"  block x-large> <v-icon large>mdi-database-settings</v-icon>Submit Transaction</v-btn>
                     
                     
                         
