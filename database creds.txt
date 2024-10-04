@@ -1,0 +1,5 @@
+user: pos_admin
+password :posadministrator
+database : rdsposinventoryinitial
+host : rds-pos-inventory.cpgu2aui8pbw.ap-southeast-1.rds.amazonaws.com
+port : 3306
