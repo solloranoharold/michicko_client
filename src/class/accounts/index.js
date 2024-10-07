@@ -172,6 +172,7 @@ async function addUpdateAccount(data) {
 }
 
 async function apiLogin(username, password) {
+    console.log(username , password )
     let a = await axios.postRequest(`accounts/login`, { username: username, password: password })
     return await a 
 }
