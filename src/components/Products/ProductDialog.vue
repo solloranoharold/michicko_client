@@ -143,7 +143,7 @@ export default {
             let data = await this.classAccounts.getManagerApproval( this.employee_id , this.password , organization_id)
             console.log(data)
              if (data.length) {
-                console.log('asdasdas')
+                 console.log('asdasdas')
                 this.historyObj.previous_stock = this.editedObj.quantity 
                 this.historyObj.current_stock = 0
                 this.historyObj.organization_id = organization_id 
@@ -158,7 +158,8 @@ export default {
              
                 await this.classInventory.addUpdateProduct(this.editedObj).then(async () => {
                      await this.classInventory.productHistoryCreate( this.historyObj)
-                     this.close()
+                      this.editedObj={}
+                     this.$emit('closeDialog' , false )
                      this.loading=false 
                  }) 
             } else {
@@ -197,11 +198,11 @@ export default {
                 }
                 this.editedObj.updated_by = this.userInfo.employee_id
                  this.loading=true 
-                await this.classInventory.addUpdateProduct(this.editedObj).then(async() => {
+                await this.classInventory.addUpdateProduct(this.editedObj).then(async () => {
+                    this.loading=false 
                     if (this.historyObj.added_quantity && this.stocks) await this.classInventory.productHistoryCreate(this.historyObj)
-
-                    this.close()
-                     this.loading=false 
+                     this.editedObj={}
+                     this.$emit('closeDialog' , false )
                  }) 
             }
         },

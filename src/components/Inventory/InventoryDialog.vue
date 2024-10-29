@@ -152,10 +152,11 @@ export default {
                 this.historyObj.price = this.editedObj.price
 
                 this.editedObj.quantity = 0 
-                this.editedObj.net_value = 0 
+                // this.editedObj.net_value = 0 
                 this.editedObj.updated_by = this.userInfo.employee_id
                 this.editedObj.total_value = this.editedObj.net_value * this.editedObj.quantity
                 this.editedObj.total_price = this.editedObj.quantity * this.editedObj.price
+
 
                 await this.classInventory.addUpdateProduct(this.editedObj).then(async () => {
                      await this.classInventory.productHistoryCreate( this.historyObj)

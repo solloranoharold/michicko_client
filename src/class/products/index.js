@@ -3,8 +3,10 @@ import Swal from 'sweetalert2'
 import AxiosRequest from '../axiosRequest'
 const axios = new AxiosRequest()
 export default class Product{ 
-     async productHistoryCreate(data) {
-         let a = await axios.postRequest(`products/productHistoryCreate`, data)
+    async productHistoryCreate(data) {
+         console.log('productHistoryCreate')
+        let a = await axios.postRequest(`products/productHistoryCreate`, data)
+        console.log(a ,'productHistoryCreate')
          return await a 
     }
     async loadDeletedProducts(organization_id) {
